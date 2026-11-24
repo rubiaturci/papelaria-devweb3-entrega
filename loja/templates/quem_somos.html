@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block titulo %}Quem Somos | Ponto & Vírgula{% endblock %}
+
+{% block conteudo %}
+<section class="destaque">
+    <h1>Quem Somos</h1>
+    <p>A Ponto &amp; Vírgula é uma papelaria de bairro que nasceu para facilitar a rotina de estudantes, professores e profissionais. Reunimos materiais escolares, itens de escritório e serviços rápidos em um só lugar.</p>
+</section>
+
+<div class="grade sobre">
+    <article class="card">
+        <div class="card-texto">
+            <h3>Nossa história</h3>
+            <p>Começamos como um pequeno balcão de cópias perto da escola do bairro. Com o tempo, passamos a oferecer cadernos, canetas, mochilas, impressões, encadernações e plastificações.</p>
+        </div>
+    </article>
+    <article class="card">
+        <div class="card-texto">
+            <h3>Missão</h3>
+            <p>Oferecer materiais de qualidade e serviços ágeis, com preço justo e atendimento próximo de quem estuda e trabalha.</p>
+        </div>
+    </article>
+    <article class="card">
+        <div class="card-texto">
+            <h3>Visão</h3>
+            <p>Ser a papelaria de referência do bairro, lembrada pela praticidade e pelo cuidado com cada cliente.</p>
+        </div>
+    </article>
+    <article class="card">
+        <div class="card-texto">
+            <h3>Valores</h3>
+            <p>Atendimento atencioso, honestidade, organização e incentivo à educação.</p>
+        </div>
+    </article>
+</div>
+
+<p class="centro">
+    <a class="botao" href="{% url 'integrantes' %}">Conheça a equipe</a>
+    <a class="botao" href="{% url 'novo_contato' %}">Fale com a gente</a>
+</p>
+{% endblock %}

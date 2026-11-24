@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block titulo %}E-mail enviado | Ponto & Vírgula{% endblock %}
+
+{% block conteudo %}
+<section class="caixa">
+    <h1>Verifique seu e-mail</h1>
+    <p>Se existir uma conta com esse e-mail, você vai receber em instantes um link para criar uma nova senha.</p>
+    <p><a href="{% url 'login' %}">Voltar para o login</a></p>
+</section>
+{% endblock %}

@@ -11,6 +11,7 @@
         <input type="hidden" name="next" value="{{ next }}">
         <button class="botao" type="submit">Entrar</button>
     </form>
+    <p><a href="{% url 'password_reset' %}">Esqueci minha senha</a></p>
     <p>Ainda não tem conta? <a href="{% url 'cadastro' %}">Cadastre-se</a></p>
 </section>
 {% endblock %}

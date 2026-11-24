@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block titulo %}Senha alterada | Ponto & Vírgula{% endblock %}
+
+{% block conteudo %}
+<section class="caixa">
+    <h1>Senha alterada</h1>
+    <p>Sua nova senha foi salva. Agora é só entrar.</p>
+    <p><a class="botao" href="{% url 'login' %}">Entrar</a></p>
+</section>
+{% endblock %}

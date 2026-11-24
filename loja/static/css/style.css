@@ -417,3 +417,62 @@ tr:last-child td {
         font-size: 1.6rem;
     }
 }
+
+/* Banner principal */
+
+.banner {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    align-items: center;
+    gap: 32px;
+    background: var(--branco);
+    border: 1px solid var(--linha);
+    border-left: 8px solid var(--coral);
+    border-radius: 10px;
+    padding: 40px 32px;
+    margin-bottom: 32px;
+}
+
+.banner h1 {
+    font-size: 2.2rem;
+    margin-bottom: 12px;
+}
+
+.banner p {
+    color: var(--cinza);
+    margin-bottom: 22px;
+}
+
+.banner img {
+    width: 100%;
+    max-width: 380px;
+    justify-self: center;
+}
+
+.botao.secundario {
+    background: transparent;
+    color: var(--verde);
+    border: 2px solid var(--verde);
+    margin-left: 8px;
+}
+
+@media (max-width: 720px) {
+    .banner {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Quem Somos */
+
+.sobre {
+    margin: 28px 0;
+}
+
+.centro {
+    text-align: center;
+}
+
+.botao.secundario:hover {
+    background: var(--verde);
+    color: var(--branco);
+}

@@ -30,6 +30,10 @@ def inicio(request):
     return render(request, "inicio.html", {"destaques": destaques})
 
 
+def quem_somos(request):
+    return render(request, "quem_somos.html")
+
+
 def servicos(request):
     grupos = {}
     for servico in Servico.objects.filter(ativo=True):

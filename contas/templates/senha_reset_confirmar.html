@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block titulo %}Nova senha | Ponto & Vírgula{% endblock %}
+
+{% block conteudo %}
+<section class="caixa">
+    {% if validlink %}
+        <h1>Criar nova senha</h1>
+        <form class="formulario" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="botao" type="submit">Salvar nova senha</button>
+        </form>
+    {% else %}
+        <h1>Link inválido</h1>
+        <p>Este link já foi usado ou expirou. Peça um novo.</p>
+        <p><a class="botao" href="{% url 'password_reset' %}">Recuperar senha</a></p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -162,3 +162,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'inicio'
 LOGOUT_REDIRECT_URL = 'inicio'
+
+# Remetente dos e-mails de recuperação de senha.
+# Com o backend "console" acima, o e-mail com o link aparece no terminal/log do servidor.
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "Ponto & Virgula <nao-responda@papelaria.local>")

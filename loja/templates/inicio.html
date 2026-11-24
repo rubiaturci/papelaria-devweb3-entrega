@@ -1,10 +1,15 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block conteudo %}
-<section class="destaque">
-    <h1>Tudo para o seu material, sem ponto final.</h1>
-    <p>Cadernos, canetas, mochilas e o que mais a sua rotina de estudos pedir.</p>
-    <a class="botao" href="{% url 'produtos' %}">Ver produtos</a>
+<section class="banner">
+    <div class="banner-texto">
+        <h1>Tudo para o seu material, sem ponto final.</h1>
+        <p>Cadernos, canetas, mochilas, impressões e o que mais a sua rotina de estudos pedir.</p>
+        <a class="botao" href="{% url 'produtos' %}">Ver produtos</a>
+        <a class="botao secundario" href="{% url 'servicos' %}">Nossos serviços</a>
+    </div>
+    <img src="{% static 'images/banner.svg' %}" alt="Caderno, lápis e ponto e vírgula, símbolo da papelaria">
 </section>
 
 <h2>Novidades</h2>

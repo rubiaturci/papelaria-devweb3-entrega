@@ -16,4 +16,29 @@ urlpatterns = [
         ),
         name="alterar_senha",
     ),
+    # Recuperação de senha (esqueci minha senha)
+    path(
+        "recuperar-senha/",
+        auth_views.PasswordResetView.as_view(
+            template_name="senha_reset_form.html",
+            email_template_name="senha_reset_email.txt",
+            subject_template_name="senha_reset_assunto.txt",
+        ),
+        name="password_reset",
+    ),
+    path(
+        "recuperar-senha/enviado/",
+        auth_views.PasswordResetDoneView.as_view(template_name="senha_reset_enviado.html"),
+        name="password_reset_done",
+    ),
+    path(
+        "recuperar-senha/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(template_name="senha_reset_confirmar.html"),
+        name="password_reset_confirm",
+    ),
+    path(
+        "recuperar-senha/concluido/",
+        auth_views.PasswordResetCompleteView.as_view(template_name="senha_reset_concluido.html"),
+        name="password_reset_complete",
+    ),
 ]
