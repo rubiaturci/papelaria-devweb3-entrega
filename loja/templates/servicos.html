@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block titulo %}Serviços | Ponto & Vírgula{% endblock %}
+
+{% block conteudo %}
+<h1>Serviços</h1>
+<p>Além dos produtos, fazemos impressões, acabamentos e serviços rápidos para estudantes, profissionais e moradores do bairro.</p>
+
+{% for grupo, itens in grupos %}
+    <h2>{{ grupo }}</h2>
+    <div class="grade">
+        {% for servico in itens %}
+            <article class="card">
+                <div class="card-texto">
+                    <h3>{{ servico.nome }}</h3>
+                    <p>{{ servico.descricao }}</p>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+{% empty %}
+    <p>Nenhum serviço cadastrado ainda.</p>
+{% endfor %}
+{% endblock %}

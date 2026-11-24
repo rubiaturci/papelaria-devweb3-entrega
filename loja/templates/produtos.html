@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block titulo %}Produtos | Ponto & Vírgula{% endblock %}
+
+{% block conteudo %}
+
+<h1>Produtos</h1>
+
+<form class="filtros" method="get">
+    <label>Buscar
+        <input type="search" name="busca" value="{{ busca }}" placeholder="Nome do produto">
+    </label>
+    <label>Categoria
+        <select name="categoria">
+            <option value="">Todas</option>
+            {% for item in categorias %}
+                <option value="{{ item.id }}" {% if categoria == item.id|stringformat:"s" %}selected{% endif %}>{{ item.nome }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <label>Preço
+        <select name="preco">
+            <option value="">Todos</option>
+            <option value="ate20" {% if preco == "ate20" %}selected{% endif %}>Até R$ 20</option>
+            <option value="20a50" {% if preco == "20a50" %}selected{% endif %}>De R$ 20 a R$ 50</option>
+            <option value="acima50" {% if preco == "acima50" %}selected{% endif %}>Acima de R$ 50</option>
+        </select>
+    </label>
+    <label>Ordenar
+        <select name="ordem">
+            <option value="">Nome</option>
+            <option value="menor" {% if ordem == "menor" %}selected{% endif %}>Menor preço</option>
+            <option value="maior" {% if ordem == "maior" %}selected{% endif %}>Maior preço</option>
+        </select>
+    </label>
+    <button class="botao" type="submit">Filtrar</button>
+    <a href="{% url 'produtos' %}">Limpar</a>
+</form>
+
+<h2>Categorias</h2>
+<ul>
+    {% for item in categorias %}
+        <li><a href="?categoria={{ item.id }}">{{ item.nome }}</a> ({{ item.total }})</li>
+    {% empty %}
+        <li>Nenhuma categoria cadastrada.</li>
+    {% endfor %}
+</ul>
+
+<h2>Gráfico de produtos por categoria</h2>
+<div class="card card-texto">
+    <canvas id="graficocategoria"></canvas>
+</div>
+
+{% comment %} CONVERTE OS dados recebidos do django em json {% endcomment %}
+{{ grafico_categorias_labels|json_script:"dados-categorias-labels" }}
+{{ grafico_categorias_valores|json_script:"dados-categorias-valores" }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+    const labelsCategorias = JSON.parse(document.getElementById("dados-categorias-labels").textContent);
+    const valoresCategorias = JSON.parse(document.getElementById("dados-categorias-valores").textContent);
+
+    new Chart(document.getElementById("graficocategoria"), {
+        type: "bar",
+        data: {
+            labels: labelsCategorias,
+            datasets: [{ label: "Produtos", data: valoresCategorias, backgroundColor: "#2e7d5b" }],
+        },
+        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } },
+    });
+</script>
+
+<h2>Produtos</h2>
+<div class="grade">
+    {% for produto in produtos %}
+        {% include "_card_produto.html" %}
+    {% empty %}
+        <p>Nenhum produto encontrado.</p>
+    {% endfor %}
+</div>
+
+<h2>Produtos da API</h2>
+
+<div class="grade">
+    {% for produto in produtos_api %}
+        <article class="card">
+            {% if produto.image %}
+                <img src="{{ produto.image }}" alt="{{ produto.title }}" loading="lazy">
+            {% else %}
+                <div class="sem-foto">Sem foto</div>
+            {% endif %}
+            <div class="card-texto">
+                <small>{{ produto.category }}</small>
+                <h3>{{ produto.title }}</h3>
+                <strong>R$ {{ produto.price }}</strong>
+            </div>
+        </article>
+    {% empty %}
+        <p>Não foi possível carregar os produtos da API.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    path("", views.inicio, name="inicio"),
+    path("produtos/", views.produtos, name="produtos"),
+    path("produtos/<int:id>/", views.produto_detalhe, name="produto_detalhe"),
+    path("servicos/", views.servicos, name="servicos"),
+    path("contato/", views.novo_contato, name="novo_contato"),
+    path("equipe/", views.integrantes, name="integrantes"),
+    # Gerenciamento
+    path("gerenciar/produtos/", views.gerenciar_produtos, name="gerenciar_produtos"),
+    path("gerenciar/produtos/novo/", views.adicionar_produto, name="adicionar_produto"),
+    path("gerenciar/produtos/<int:id>/editar/", views.editar_produto, name="editar_produto"),
+    path("gerenciar/produtos/<int:id>/excluir/", views.excluir_produto, name="excluir_produto"),
+    path("gerenciar/contatos/", views.contatos, name="contatos"),
+    path("gerenciar/contatos/<int:id>/excluir/", views.excluir_contato, name="excluir_contato"),
+    path("gerenciar/equipe/novo/", views.adicionar_integrante, name="adicionar_integrante"),
+    path("gerenciar/equipe/<int:id>/excluir/", views.excluir_integrante, name="excluir_integrante"),
+    # API
+    path("api/categorias/", views.categoria_api, name="categoria_api"),
+    path("api/categorias/<int:id>/", views.categoria_api, name="categoria_api_detalhe"),
+
+    path('relatorios/', views.gerar_relatorio, name='gerar_relatorio'),
+
+
+]

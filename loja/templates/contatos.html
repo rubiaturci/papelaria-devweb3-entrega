@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block titulo %}Mensagens | Ponto & Vírgula{% endblock %}
+
+{% block conteudo %}
+<h1>Mensagens recebidas</h1>
+
+<div class="tabela">
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Telefone</th>
+                <th>Mensagem</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contato in contatos %}
+                <tr>
+                    <td>{{ contato.nome }}</td>
+                    <td>{{ contato.email }}</td>
+                    <td>{{ contato.telefone }}</td>
+                    <td>{{ contato.mensagem }}</td>
+                    <td>
+                        <form method="post" action="{% url 'excluir_contato' contato.id %}" onsubmit="return confirm('Excluir esta mensagem?');">
+                            {% csrf_token %}
+                            <button class="link perigo" type="submit">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="5">Nenhuma mensagem por enquanto.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block titulo %}Equipe | Ponto & Vírgula{% endblock %}
+
+{% block conteudo %}
+<div class="titulo-acao">
+    <h1>Equipe</h1>
+    {% if user.is_staff %}
+        <a class="botao" href="{% url 'adicionar_integrante' %}">Adicionar integrante</a>
+    {% endif %}
+</div>
+
+{% if erro %}
+    <p class="aviso error">{{ erro }}</p>
+{% else %}
+    <div class="grade">
+        {% for integrante in integrantes %}
+            <article class="card pessoa">
+                {% if integrante.foto_url %}
+                    <img src="{{ integrante.foto_url }}" alt="Foto de {{ integrante.nome }}">
+                {% else %}
+                    <div class="inicial">{{ integrante.nome|first|upper }}</div>
+                {% endif %}
+                <div class="card-texto">
+                    <h3>{{ integrante.nome }}</h3>
+                    <small>{{ integrante.cargo }}</small>
+                    <p>{{ integrante.biografia }}</p>
+                    {% if user.is_staff %}
+                        <form method="post" action="{% url 'excluir_integrante' integrante.id %}" onsubmit="return confirm('Excluir este integrante?');">
+                            {% csrf_token %}
+                            <button class="link perigo" type="submit">Excluir</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </article>
+        {% empty %}
+            <p>Nenhum integrante cadastrado.</p>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}

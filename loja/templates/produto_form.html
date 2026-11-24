@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ titulo }} | Ponto & Vírgula{% endblock %}
+
+{% block conteudo %}
+<section class="caixa">
+    <h1>{{ titulo }}</h1>
+    <form class="formulario" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="botao" type="submit">Salvar</button>
+        <a href="{% url 'gerenciar_produtos' %}">Cancelar</a>
+    </form>
+</section>
+{% endblock %}

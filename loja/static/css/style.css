@@ -1,0 +1,419 @@
+:root {
+    --fundo: #fbf6ec;
+    --branco: #ffffff;
+    --texto: #2b2b2b;
+    --cinza: #6f6a60;
+    --linha: #e6dcc8;
+    --verde: #2f5d62;
+    --verde-escuro: #234649;
+    --coral: #c8553d;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: Georgia, "Times New Roman", serif;
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+a {
+    color: var(--verde);
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin: 32px 0 16px;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+/* Topo e rodapé */
+
+.topo {
+    background: var(--verde);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.marca {
+    color: var(--branco);
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.marca span {
+    color: #f2b880;
+}
+
+.topo nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-family: Arial, sans-serif;
+    font-size: 0.95rem;
+}
+
+.topo nav a,
+.topo nav .link {
+    color: var(--branco);
+    text-decoration: none;
+}
+
+.topo nav a:hover,
+.topo nav .link:hover {
+    text-decoration: underline;
+}
+
+main {
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 32px 20px;
+    flex: 1;
+}
+
+.rodape {
+    border-top: 1px solid var(--linha);
+    color: var(--cinza);
+    font-size: 0.85rem;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Botões */
+
+.botao {
+    background: var(--coral);
+    border: 0;
+    border-radius: 6px;
+    color: var(--branco);
+    cursor: pointer;
+    display: inline-block;
+    font-family: Arial, sans-serif;
+    font-size: 0.95rem;
+    padding: 10px 18px;
+    text-decoration: none;
+}
+
+.botao:hover {
+    background: #a94530;
+}
+
+.link {
+    background: none;
+    border: 0;
+    color: var(--verde);
+    cursor: pointer;
+    font: inherit;
+    text-decoration: underline;
+}
+
+.perigo {
+    color: var(--coral);
+}
+
+/* Avisos */
+
+.aviso {
+    background: #e3efe6;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+}
+
+.aviso.error {
+    background: #f8dfd8;
+}
+
+/* Início */
+
+.destaque {
+    background: var(--branco);
+    border: 1px solid var(--linha);
+    border-radius: 10px;
+    padding: 44px 32px;
+}
+
+.destaque h1 {
+    margin-bottom: 10px;
+}
+
+.destaque p {
+    color: var(--cinza);
+    margin-bottom: 22px;
+}
+
+/* Cards de produto e equipe */
+
+.grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: var(--branco);
+    border: 1px solid var(--linha);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card:hover {
+    border-color: var(--verde);
+}
+
+.card > a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.card img,
+.sem-foto,
+.inicial {
+    aspect-ratio: 1;
+    object-fit: cover;
+    width: 100%;
+}
+
+.sem-foto,
+.inicial {
+    align-items: center;
+    background: var(--linha);
+    color: var(--cinza);
+    display: flex;
+    justify-content: center;
+}
+
+.inicial {
+    color: var(--verde);
+    font-size: 4rem;
+}
+
+.card-texto {
+    padding: 14px;
+}
+
+.card-texto h3 {
+    font-size: 1.05rem;
+    margin: 2px 0 6px;
+}
+
+small {
+    color: var(--cinza);
+    font-family: Arial, sans-serif;
+}
+
+.pessoa p {
+    margin: 8px 0;
+}
+
+/* Filtros */
+
+.filtros {
+    align-items: flex-end;
+    background: var(--branco);
+    border: 1px solid var(--linha);
+    border-radius: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding: 16px;
+}
+
+.filtros label {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+    font-size: 0.85rem;
+    gap: 4px;
+    min-width: 140px;
+}
+
+.filtros > a {
+    padding-bottom: 10px;
+}
+
+input,
+select,
+textarea {
+    background: var(--branco);
+    border: 1px solid #cfc4ad;
+    border-radius: 6px;
+    font: inherit;
+    padding: 9px;
+    width: 100%;
+}
+
+input[type="checkbox"] {
+    width: auto;
+}
+
+/* Detalhe do produto */
+
+.detalhe {
+    display: grid;
+    gap: 32px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    margin-top: 20px;
+}
+
+.detalhe img,
+.detalhe .sem-foto {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.detalhe h1 {
+    margin-bottom: 12px;
+}
+
+.preco {
+    color: var(--coral);
+    font-size: 1.7rem;
+    font-weight: bold;
+    margin: 16px 0 6px;
+}
+
+.esgotado {
+    color: var(--coral);
+}
+
+/* Formulários */
+
+.caixa {
+    background: var(--branco);
+    border: 1px solid var(--linha);
+    border-radius: 10px;
+    margin: 0 auto;
+    max-width: 520px;
+    padding: 28px;
+}
+
+.formulario {
+    margin-bottom: 14px;
+}
+
+.formulario p {
+    margin-bottom: 14px;
+}
+
+.formulario label {
+    display: block;
+    font-family: Arial, sans-serif;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.helptext {
+    color: var(--cinza);
+    display: block;
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
+
+.helptext ul,
+.errorlist {
+    list-style: none;
+}
+
+.errorlist {
+    color: var(--coral);
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+}
+
+/* Tabelas */
+
+.titulo-acao {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.titulo-acao h1 {
+    margin-bottom: 0;
+}
+
+.tabela {
+    background: var(--branco);
+    border: 1px solid var(--linha);
+    border-radius: 10px;
+    overflow-x: auto;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th,
+td {
+    border-bottom: 1px solid var(--linha);
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    color: var(--cinza);
+    font-family: Arial, sans-serif;
+    font-size: 0.85rem;
+}
+
+tr:last-child td {
+    border-bottom: 0;
+}
+
+.acoes {
+    display: flex;
+    gap: 14px;
+}
+
+/* Celular */
+
+@media (max-width: 640px) {
+    .topo {
+        padding: 14px 16px;
+    }
+
+    .detalhe {
+        grid-template-columns: 1fr;
+    }
+
+    .grade {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+}

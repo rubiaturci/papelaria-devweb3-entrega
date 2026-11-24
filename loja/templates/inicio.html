@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<section class="destaque">
+    <h1>Tudo para o seu material, sem ponto final.</h1>
+    <p>Cadernos, canetas, mochilas e o que mais a sua rotina de estudos pedir.</p>
+    <a class="botao" href="{% url 'produtos' %}">Ver produtos</a>
+</section>
+
+<h2>Novidades</h2>
+<div class="grade">
+    {% for produto in destaques %}
+        {% include "_card_produto.html" %}
+    {% empty %}
+        <p>Nenhum produto cadastrado ainda.</p>
+    {% endfor %}
+</div>
+{% endblock %}

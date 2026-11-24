@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Ponto & Vírgula Papelaria{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/icone.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="topo">
+        <a class="marca" href="{% url 'inicio' %}">Ponto <span>&amp;</span> Vírgula</a>
+        <nav>
+            <a href="{% url 'inicio' %}">Início</a>
+            <a href="{% url 'produtos' %}">Produtos</a>
+            <a href="{% url 'servicos' %}">Serviços</a>
+            <a href="{% url 'integrantes' %}">Equipe</a>
+            <a href="{% url 'novo_contato' %}">Contato</a>
+            {% if user.is_staff %}
+                <a href="{% url 'gerenciar_produtos' %}">Gerenciar</a>
+                <a href="{% url 'contatos' %}">Mensagens</a>
+            {% endif %}
+            {% if user.is_authenticated %}
+                <a href="{% url 'minha_conta' %}">Minha conta</a>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button class="link" type="submit">Sair</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Entrar</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        {% for mensagem in messages %}
+            <p class="aviso {{ mensagem.tags }}">{{ mensagem }}</p>
+        {% endfor %}
+        {% block conteudo %}{% endblock %}
+    </main>
+
+    <footer class="rodape">
+        <p>Ponto &amp; Vírgula Papelaria, {% now "Y" %}. Loja fictícia feita para a aula de Desenvolvimento Web III.</p>
+    </footer>
+</body>
+</html>

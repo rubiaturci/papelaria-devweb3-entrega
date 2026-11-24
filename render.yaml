@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: papelaria
+    runtime: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.15
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "127.0.0.1,localhost"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false

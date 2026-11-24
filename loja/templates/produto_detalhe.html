@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ produto.nome }} | Ponto & Vírgula{% endblock %}
+
+{% block conteudo %}
+<a href="{% url 'produtos' %}">Voltar para produtos</a>
+
+<section class="detalhe">
+    {% if produto.imagem %}
+        <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+    {% else %}
+        <div class="sem-foto">Sem foto</div>
+    {% endif %}
+    <div>
+        <small>{{ produto.categoria }}</small>
+        <h1>{{ produto.nome }}</h1>
+        <p>{{ produto.descricao|default:"Produto sem descrição." }}</p>
+        <p class="preco">R$ {{ produto.preco }}</p>
+        {% if produto.estoque %}
+            <p>{{ produto.estoque }} em estoque</p>
+        {% else %}
+            <p class="esgotado">Esgotado</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
