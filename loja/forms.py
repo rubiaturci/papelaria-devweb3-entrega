@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Contato, Produto
+from .models import Contato, Integrante, Produto
 
 
 class ProdutoForm(forms.ModelForm):
@@ -18,8 +18,10 @@ class ContatoForm(forms.ModelForm):
         fields = ["nome", "telefone", "email", "mensagem"]
 
 
-class IntegranteForm(forms.Form):
-    nome = forms.CharField(max_length=100)
-    cargo = forms.CharField(max_length=100)
-    biografia = forms.CharField(widget=forms.Textarea, required=False)
+class IntegranteForm(forms.ModelForm):
     foto_url = forms.URLField(label="URL da foto", required=False, assume_scheme="https")
+
+    class Meta:
+        model = Integrante
+        fields = ["nome", "cargo", "biografia", "foto_url"]
+        widgets = {"biografia": forms.Textarea}

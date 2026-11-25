@@ -1,21 +1,23 @@
-import logging 
-import requests
+import logging
 
+import requests
+from django.conf import settings
 from django.contrib import messages
-from django.core.cache import cache
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.cache import cache
 from django.db.models import Count, DecimalField, F, Max, Min, ProtectedError, Q, Sum
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
+from django.views.static import serve
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from .forms import ContatoForm, IntegranteForm, ProdutoForm
-from .models import Categoria, Contato, Pedido, Produto, Servico
+from .models import ArquivoMidia, Categoria, Contato, Integrante, Pedido, Produto, Servico
 from .serializers import CategoriaSerializer
-from .supabase_client import get_supabase
 
 logger = logging.getLogger(__name__)
 
@@ -31,19 +33,8 @@ def inicio(request):
     return render(request, "inicio.html", {"destaques": destaques})
 
 
-def buscar_integrantes():
-    """Lê os integrantes no Supabase. Devolve (lista, erro)."""
-    try:
-        resposta = get_supabase().table("integrantes").select("*").order("id").execute()
-    except Exception:
-        logger.exception("Falha ao consultar integrantes")
-        return [], "Não foi possível carregar a equipe agora. Verifique a conexão com o Supabase."
-    return resposta.data, None
-
-
 def quem_somos(request):
-    integrantes, erro = buscar_integrantes()
-    return render(request, "quem_somos.html", {"integrantes": integrantes, "erro": erro})
+    return render(request, "quem_somos.html", {"integrantes": Integrante.objects.all()})
 
 
 def servicos(request):
@@ -253,77 +244,44 @@ def excluir_contato(request, id):
     return redirect("contatos")
 
 
-# Integrantes (ficam no Supabase, as outras páginas usam SQLite)
+# Integrantes (tabela "integrantes" no Postgres do Supabase)
 
 
 def integrantes(request):
-    try:
-        resposta = get_supabase().table("integrantes").select("*").execute()
-    except Exception:
-        logger.exception("Falha ao consultar integrantes")
-        erro = "Não foi possível carregar a equipe agora. Verifique a conexão com o Supabase."
-        return render(request, "integrantes.html", {"erro": erro}, status=503)
-    return render(request, "integrantes.html", {"integrantes": resposta.data})
+    return render(request, "integrantes.html", {"integrantes": Integrante.objects.all()})
+
+
+@so_equipe
+def gerenciar_equipe(request):
+    return render(request, "gerenciar_equipe.html", {"integrantes": Integrante.objects.all()})
 
 
 @so_equipe
 def adicionar_integrante(request):
     form = IntegranteForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
-        try:
-            get_supabase().table("integrantes").insert(form.cleaned_data).execute()
-        except Exception:
-            logger.exception("Falha ao cadastrar integrante")
-            form.add_error(None, "Não foi possível salvar. Verifique a conexão com o Supabase.")
-        else:
-            messages.success(request, "Integrante adicionado.")
-            return redirect("gerenciar_equipe")
+        form.save()
+        messages.success(request, "Integrante adicionado.")
+        return redirect("gerenciar_equipe")
     return render(request, "integrante_form.html", {"form": form, "titulo": "Novo integrante"})
 
 
 @so_equipe
-def gerenciar_equipe(request):
-    integrantes, erro = buscar_integrantes()
-    return render(request, "gerenciar_equipe.html", {"integrantes": integrantes, "erro": erro})
-
-
-@so_equipe
 def editar_integrante(request, id):
-    if request.method == "POST":
-        form = IntegranteForm(request.POST)
-        if form.is_valid():
-            try:
-                get_supabase().table("integrantes").update(form.cleaned_data).eq("id", id).execute()
-            except Exception:
-                logger.exception("Falha ao editar integrante")
-                form.add_error(None, "Não foi possível salvar. Verifique a conexão com o Supabase.")
-            else:
-                messages.success(request, "Integrante atualizado.")
-                return redirect("gerenciar_equipe")
-    else:
-        try:
-            resposta = get_supabase().table("integrantes").select("*").eq("id", id).execute()
-        except Exception:
-            logger.exception("Falha ao carregar integrante")
-            messages.error(request, "Não foi possível carregar o integrante. Tente novamente.")
-            return redirect("gerenciar_equipe")
-        if not resposta.data:
-            messages.error(request, "Integrante não encontrado.")
-            return redirect("gerenciar_equipe")
-        form = IntegranteForm(initial=resposta.data[0])
+    integrante = get_object_or_404(Integrante, id=id)
+    form = IntegranteForm(request.POST or None, instance=integrante)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Integrante atualizado.")
+        return redirect("gerenciar_equipe")
     return render(request, "integrante_form.html", {"form": form, "titulo": "Editar integrante"})
 
 
 @so_equipe
 @require_POST
 def excluir_integrante(request, id):
-    try:
-        get_supabase().table("integrantes").delete().eq("id", id).execute()
-    except Exception:
-        logger.exception("Falha ao excluir integrante")
-        messages.error(request, "Não foi possível excluir. Tente novamente.")
-    else:
-        messages.success(request, "Integrante excluído.")
+    get_object_or_404(Integrante, id=id).delete()
+    messages.success(request, "Integrante excluído.")
     return redirect("gerenciar_equipe")
 
 
@@ -435,3 +393,16 @@ def meus_pedidos(request):
     pedidos = Pedido.objects.filter(usuario=request.user).select_related("produto")
     total = pedidos.aggregate(total=Sum("preco"))["total"] or 0
     return render(request, "meus_pedidos.html", {"pedidos": pedidos, "total": total})
+
+
+# Imagens enviadas (guardadas no banco; ver loja/storage.py)
+
+
+def midia(request, nome):
+    arquivo = ArquivoMidia.objects.filter(nome=nome).only("conteudo", "tipo").first()
+    if arquivo is not None:
+        resposta = HttpResponse(bytes(arquivo.conteudo), content_type=arquivo.tipo)
+        resposta["Cache-Control"] = "public, max-age=86400"
+        return resposta
+    # Arquivos antigos que ainda estão na pasta media/ do projeto.
+    return serve(request, nome, document_root=settings.MEDIA_ROOT)

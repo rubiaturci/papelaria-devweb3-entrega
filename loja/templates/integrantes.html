@@ -10,9 +10,6 @@
     {% endif %}
 </div>
 
-{% if erro %}
-    <p class="aviso error">{{ erro }}</p>
-{% else %}
     <div class="grade">
         {% for integrante in integrantes %}
             <article class="card pessoa">
@@ -37,5 +34,4 @@
             <p>Nenhum integrante cadastrado.</p>
         {% endfor %}
     </div>
-{% endif %}
 {% endblock %}

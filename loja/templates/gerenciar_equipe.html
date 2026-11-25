@@ -11,9 +11,6 @@
     <a class="botao" href="{% url 'adicionar_integrante' %}">+ Novo integrante</a>
 </div>
 
-{% if erro %}
-    <p class="aviso error">{{ erro }}</p>
-{% else %}
     <div class="tabela">
         <table>
             <thead>
@@ -55,7 +52,6 @@
         </table>
     </div>
     <p class="subtitulo">Total de integrantes cadastrados: {{ integrantes|length }}</p>
-{% endif %}
 
 <p><a href="{% url 'painel' %}">← Voltar ao painel</a></p>
 {% endblock %}

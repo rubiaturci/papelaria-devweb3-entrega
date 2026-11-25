@@ -94,3 +94,43 @@ class Pedido(models.Model):
 
     def __str__(self):
         return f"{self.nome} - {self.usuario}"
+
+
+class Integrante(models.Model):
+    """Integrante da equipe.
+
+    No Supabase (produção) é a tabela public.integrantes, que já existia.
+    Localmente (SQLite) a tabela é criada pela migration 0005.
+    """
+
+    nome = models.CharField(max_length=100)
+    cargo = models.CharField(max_length=100)
+    biografia = models.TextField(blank=True, default="")
+    foto_url = models.TextField("URL da foto", blank=True, null=True)
+
+    class Meta:
+        db_table = "integrantes"
+        ordering = ["id"]
+
+    def __str__(self):
+        return self.nome
+
+
+class ArquivoMidia(models.Model):
+    """Imagem enviada pelo site, guardada no próprio banco (Postgres do Supabase).
+
+    Assim as imagens não somem quando o Render reinicia ou faz um novo deploy.
+    """
+
+    nome = models.CharField(max_length=255, unique=True)
+    conteudo = models.BinaryField()
+    tipo = models.CharField(max_length=100, default="application/octet-stream")
+    tamanho = models.PositiveIntegerField(default=0)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "arquivo de mídia"
+        verbose_name_plural = "arquivos de mídia"
+
+    def __str__(self):
+        return self.nome

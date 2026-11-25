@@ -28,6 +28,7 @@ urlpatterns = [
     path("api/categorias/", views.categoria_api, name="categoria_api"),
     path("api/categorias/<int:id>/", views.categoria_api, name="categoria_api_detalhe"),
 
+    path("media/<path:nome>", views.midia, name="midia"),
     path('relatorios/', views.gerar_relatorio, name='gerar_relatorio'),
 
 

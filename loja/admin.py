@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Categoria, Contato, Pedido, Produto, Servico
+from .models import Categoria, Contato, Integrante, Pedido, Produto, Servico
 
 admin.site.site_header = "Ponto & Vírgula Papelaria"
 admin.site.site_title = "Ponto & Vírgula"
@@ -39,3 +39,9 @@ class PedidoAdmin(admin.ModelAdmin):
     list_display = ("nome", "usuario", "preco", "criado_em")
     list_filter = ("criado_em",)
     search_fields = ("nome", "usuario__username")
+
+
+@admin.register(Integrante)
+class IntegranteAdmin(admin.ModelAdmin):
+    list_display = ("nome", "cargo")
+    search_fields = ("nome", "cargo")

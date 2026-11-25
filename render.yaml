@@ -14,7 +14,6 @@ services:
         value: "127.0.0.1,localhost"
       - key: SECRET_KEY
         generateValue: true
-      - key: SUPABASE_URL
-        sync: false
-      - key: SUPABASE_KEY
+      # PostgreSQL do Supabase (Session Pooler). Preenchido no painel do Render.
+      - key: DATABASE_URL
         sync: false

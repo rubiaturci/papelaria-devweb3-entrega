@@ -1,16 +1,20 @@
 PONTO & VIRGULA PAPELARIA
 Loja ficticia feita em Django para a aula de Desenvolvimento Web III.
 
-COMO RODAR (PowerShell, dentro da pasta papelaria)
+Site publicado: https://papelaria-rphm.onrender.com
+
+COMO RODAR NO COMPUTADOR (PowerShell, dentro da pasta papelaria)
 
 python -m venv .venv
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 python manage.py migrate
+python manage.py createsuperuser
 python manage.py runserver
 
 Depois abra http://127.0.0.1:8000/
+No computador o banco e o SQLite (arquivo db.sqlite3, criado pelo migrate).
 
 LOGIN DE ADMINISTRADOR
 Crie seu próprio administrador com:
@@ -18,25 +22,29 @@ python manage.py createsuperuser
 
 Não compartilhe senhas nem coloque credenciais no repositório.
 
-PAGINAS
-/                     inicio
-/produtos/            catalogo com busca e filtros
-/contato/             formulario de contato
-/equipe/              integrantes (Supabase)
-/gerenciar/produtos/  adicionar, editar e excluir produtos (so administrador)
-/gerenciar/contatos/  mensagens recebidas (so administrador)
-/conta/entrar/        login
-/conta/cadastro/      criar conta
-/api/categorias/      API de categorias
-/admin/               admin do Django
+BANCO DE DADOS EM PRODUCAO
+No Render o site usa o PostgreSQL do Supabase. A conexao fica na variavel
+DATABASE_URL (Session Pooler, porta 5432, SSL), configurada no painel do Render.
+Sem DATABASE_URL o site nao sobe em producao.
+As imagens enviadas pelo site ficam guardadas no proprio banco.
 
-SUPABASE (so para a pagina Equipe)
-Crie um arquivo .env nesta pasta com:
-SUPABASE_URL=https://SEU-PROJETO.supabase.co
-SUPABASE_KEY=SUA-CHAVE
-A tabela integrantes precisa das colunas id, nome, cargo, biografia e foto_url.
-No plano gratis o projeto pausa depois de um tempo parado: confira se ele esta ativo antes de apresentar.
-O resto do site funciona sem o Supabase.
+PAGINAS
+/                       inicio
+/quem-somos/            historia da loja e equipe
+/produtos/              catalogo com busca, filtros, botao Comprar e produtos da API
+/servicos/              servicos da papelaria
+/contato/               formulario de contato
+/equipe/                integrantes
+/conta/entrar/          login (com "Esqueci minha senha")
+/conta/cadastro/        criar conta
+/painel/                painel do usuario logado
+/meus-pedidos/          compras do usuario
+/gerenciar/produtos/    produtos: indicadores, filtros, cadastro e edicao (so equipe)
+/gerenciar/contatos/    mensagens recebidas (so equipe)
+/gerenciar/equipe/      integrantes (so equipe)
+/relatorios/            relatorio com graficos (so equipe)
+/api/categorias/        API de categorias
+/admin/                 admin do Django
 
 TESTES
 python manage.py test

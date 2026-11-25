@@ -36,9 +36,6 @@
 </div>
 
 <h2>Nossa equipe</h2>
-{% if erro %}
-    <p class="aviso error">{{ erro }}</p>
-{% else %}
     <div class="grade">
         {% for integrante in integrantes %}
             <article class="card pessoa">
@@ -57,7 +54,6 @@
             <p>Nenhum integrante cadastrado.</p>
         {% endfor %}
     </div>
-{% endif %}
 
 <p class="centro">
     <a class="botao" href="{% url 'novo_contato' %}">Fale com a gente</a>

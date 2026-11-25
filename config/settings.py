@@ -93,13 +93,37 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
 import dj_database_url
+from django.core.exceptions import ImproperlyConfigured
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
+# Banco de dados
+# - Produção (Render): PostgreSQL do Supabase, pela variável DATABASE_URL
+#   (Session Pooler, porta 5432, SSL obrigatório). Sem DATABASE_URL o site
+#   NÃO sobe em produção: nada de voltar escondido para o SQLite, que é apagado
+#   a cada deploy no Render.
+# - Desenvolvimento e testes: SQLite local (db.sqlite3).
+DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
+USANDO_POSTGRES = DATABASE_URL.startswith(("postgres://", "postgresql://"))
+
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=60,
+            conn_health_checks=True,
+            ssl_require=USANDO_POSTGRES,
+        )
+    }
+elif DEBUG or "test" in sys.argv:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
+else:
+    raise ImproperlyConfigured(
+        "DATABASE_URL não configurada. Em produção o banco é o PostgreSQL do Supabase."
     )
-}
 
 
 # Password validation
@@ -139,8 +163,12 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STORAGES = {
+    # Com Postgres (produção), as imagens enviadas ficam no banco e não se perdem
+    # nos deploys do Render. Em desenvolvimento ficam na pasta media/.
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "loja.storage.BancoDeDadosStorage"
+        if USANDO_POSTGRES
+        else "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
@@ -151,11 +179,28 @@ STORAGES = {
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
+# Com EMAIL_HOST configurado (ex.: Gmail com senha de app), os e-mails de
+# recuperação de senha são enviados de verdade. Sem ele, aparecem no log.
+if os.environ.get("EMAIL_HOST"):
+    MAILERS = {
+        "default": {
+            "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+            "OPTIONS": {
+                "host": os.environ["EMAIL_HOST"],
+                "port": int(os.environ.get("EMAIL_PORT", "587")),
+                "username": os.environ.get("EMAIL_HOST_USER", ""),
+                "password": os.environ.get("EMAIL_HOST_PASSWORD", ""),
+                "use_tls": True,
+                "timeout": 15,
+            },
+        },
+    }
+else:
+    MAILERS = {
+        "default": {
+            "BACKEND": "django.core.mail.backends.console.EmailBackend",
+        },
+    }
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

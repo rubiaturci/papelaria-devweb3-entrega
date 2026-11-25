@@ -5,3 +5,5 @@ __pycache__/
 *.pyc
 staticfiles/
 HANDOFF.md
+db.sqlite3
+media/produtos/*_*.png
