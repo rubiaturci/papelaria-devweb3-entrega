@@ -1,23 +1,30 @@
 {% extends "base.html" %}
 
-{% block titulo %}Relatório | Ponto & Vírgula{% endblock %}
+{% block titulo %}Relatórios | Ponto & Vírgula{% endblock %}
 
 {% block conteudo %}
-<h1>Relatório de estoque</h1>
+<small>Análise de dados</small>
+<h1>Relatórios</h1>
+<p class="subtitulo">Acompanhe os dados e a situação dos produtos cadastrados na papelaria.</p>
 
 <div class="grade">
     <article class="card"><div class="card-texto"><small>Produtos cadastrados</small><h3>{{ total_produtos }}</h3></div></article>
-    <article class="card"><div class="card-texto"><small>Produtos ativos</small><h3>{{ total_ativos }}</h3></div></article>
+    <article class="card"><div class="card-texto"><small>Disponíveis (ativos)</small><h3>{{ total_ativos }}</h3></div></article>
+    <article class="card"><div class="card-texto"><small>Indisponíveis (inativos)</small><h3>{{ total_inativos }}</h3></div></article>
     <article class="card"><div class="card-texto"><small>Valor do estoque</small><h3>R$ {{ valor_estoque|floatformat:2 }}</h3></div></article>
     <article class="card"><div class="card-texto"><small>Mensagens de contato</small><h3>{{ total_contatos }}</h3></div></article>
     <article class="card"><div class="card-texto"><small>Serviços ativos</small><h3>{{ total_servicos }}</h3></div></article>
 </div>
 
 <h2>Gráficos</h2>
-<div class="grade">
+<div class="grade graficos">
     <div class="card card-texto">
         <h3>Quantidade de produtos por categoria</h3>
         <canvas id="graficocategoria"></canvas>
+    </div>
+    <div class="card card-texto">
+        <h3>Situação dos produtos</h3>
+        <canvas id="graficosituacao"></canvas>
     </div>
     <div class="card card-texto">
         <h3>Serviços ativos e inativos</h3>
@@ -28,6 +35,7 @@
 {{ grafico_categorias_labels|json_script:"dados-categorias-labels" }}
 {{ grafico_categorias_valores|json_script:"dados-categorias-valores" }}
 {{ grafico_servicos_valores|json_script:"dados-servicos-valores" }}
+{{ grafico_produtos_situacao|json_script:"dados-produtos-situacao" }}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
     const labelsCategorias = JSON.parse(document.getElementById("dados-categorias-labels").textContent);
@@ -41,6 +49,17 @@
             datasets: [{ label: "Produtos", data: valoresCategorias, backgroundColor: "#2e7d5b" }],
         },
         options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } },
+    });
+
+    new Chart(document.getElementById("graficosituacao"), {
+        type: "doughnut",
+        data: {
+            labels: ["Ativos", "Inativos"],
+            datasets: [{
+                data: JSON.parse(document.getElementById("dados-produtos-situacao").textContent),
+                backgroundColor: ["#2f5d62", "#d4a03a"],
+            }],
+        },
     });
 
     new Chart(document.getElementById("graficoservicos"), {
@@ -89,6 +108,5 @@
 {% empty %}
     <p>Nenhum serviço cadastrado.</p>
 {% endfor %}
+<p><a href="{% url 'painel' %}">← Voltar ao painel</a></p>
 {% endblock %}
-
-

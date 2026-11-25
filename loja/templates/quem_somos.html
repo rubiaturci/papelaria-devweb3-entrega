@@ -35,8 +35,31 @@
     </article>
 </div>
 
+<h2>Nossa equipe</h2>
+{% if erro %}
+    <p class="aviso error">{{ erro }}</p>
+{% else %}
+    <div class="grade">
+        {% for integrante in integrantes %}
+            <article class="card pessoa">
+                {% if integrante.foto_url %}
+                    <img src="{{ integrante.foto_url }}" alt="Foto de {{ integrante.nome }}">
+                {% else %}
+                    <div class="inicial">{{ integrante.nome|first|upper }}</div>
+                {% endif %}
+                <div class="card-texto">
+                    <h3>{{ integrante.nome }}</h3>
+                    <small>{{ integrante.cargo }}</small>
+                    <p>{{ integrante.biografia }}</p>
+                </div>
+            </article>
+        {% empty %}
+            <p>Nenhum integrante cadastrado.</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
 <p class="centro">
-    <a class="botao" href="{% url 'integrantes' %}">Conheça a equipe</a>
     <a class="botao" href="{% url 'novo_contato' %}">Fale com a gente</a>
 </p>
 {% endblock %}

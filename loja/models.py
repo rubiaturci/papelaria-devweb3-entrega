@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
 
@@ -68,3 +69,28 @@ class Contato(models.Model):
 
     def __str__(self):
         return f"{self.nome} ({self.email})"
+
+
+class Pedido(models.Model):
+    """Compra feita por um cliente no catálogo.
+
+    Nome, descrição e preço são copiados do produto no momento da compra,
+    para o histórico não mudar se o produto for editado ou excluído depois.
+    """
+
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="pedidos"
+    )
+    produto = models.ForeignKey(
+        Produto, on_delete=models.SET_NULL, null=True, blank=True, related_name="pedidos"
+    )
+    nome = models.CharField(max_length=100)
+    descricao = models.TextField("descrição", blank=True)
+    preco = models.DecimalField("preço", max_digits=10, decimal_places=2)
+    criado_em = models.DateTimeField("comprado em", auto_now_add=True)
+
+    class Meta:
+        ordering = ["-criado_em"]
+
+    def __str__(self):
+        return f"{self.nome} - {self.usuario}"

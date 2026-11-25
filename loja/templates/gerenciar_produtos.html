@@ -4,42 +4,97 @@
 
 {% block conteudo %}
 <div class="titulo-acao">
-    <h1>Gerenciar produtos</h1>
-    <a class="botao" href="{% url 'adicionar_produto' %}">Adicionar produto</a>
+    <div>
+        <small>Painel administrativo</small>
+        <h1>Gerenciamento de produtos</h1>
+        <p class="subtitulo">Cadastre, consulte e acompanhe os produtos da papelaria.</p>
+    </div>
+    <a class="botao" href="{% url 'adicionar_produto' %}">+ Novo produto</a>
 </div>
 
+<div class="indicadores">
+    <div class="indicador"><small>Total de produtos</small><strong>{{ resumo.total }}</strong></div>
+    <div class="indicador"><small>Menor preço</small><strong>R$ {{ resumo.menor|default:0|floatformat:2 }}</strong></div>
+    <div class="indicador"><small>Maior preço</small><strong>R$ {{ resumo.maior|default:0|floatformat:2 }}</strong></div>
+    <div class="indicador"><small>Situação</small><strong>{{ resumo.ativos }} ativos · {{ resumo.inativos }} inativos</strong></div>
+</div>
+
+<section class="painel-filtros">
+    <h2>Filtros e pesquisa</h2>
+    <form class="busca" method="get">
+        {% if categoria %}<input type="hidden" name="categoria" value="{{ categoria }}">{% endif %}
+        {% if preco %}<input type="hidden" name="preco" value="{{ preco }}">{% endif %}
+        {% if ordem %}<input type="hidden" name="ordem" value="{{ ordem }}">{% endif %}
+        <input type="search" name="busca" value="{{ busca }}" placeholder="Pesquisar produto pelo nome..." aria-label="Pesquisar produto pelo nome">
+        <button class="botao" type="submit">Buscar</button>
+    </form>
+
+    <h3>Filtrar por categoria</h3>
+    <div class="chips">
+        {% for item in categorias %}
+            <a class="chip{% if categoria == item.id|stringformat:'s' %} ativo{% endif %}" href="?categoria={{ item.id }}&preco={{ preco }}&ordem={{ ordem }}&busca={{ busca|urlencode }}">{{ item.nome }}</a>
+        {% endfor %}
+    </div>
+
+    <h3>Filtrar por preço</h3>
+    <div class="chips">
+        {% for valor, rotulo in faixas_preco %}
+            <a class="chip{% if preco == valor %} ativo{% endif %}" href="?preco={{ valor }}&categoria={{ categoria }}&ordem={{ ordem }}&busca={{ busca|urlencode }}">{{ rotulo }}</a>
+        {% endfor %}
+    </div>
+
+    <h3>Ordenar produtos</h3>
+    <div class="chips">
+        {% for valor, rotulo in ordens %}
+            <a class="chip{% if ordem == valor %} ativo{% endif %}" href="?ordem={{ valor }}&categoria={{ categoria }}&preco={{ preco }}&busca={{ busca|urlencode }}">{{ rotulo }}</a>
+        {% endfor %}
+        <a class="chip limpar" href="{% url 'gerenciar_produtos' %}">Limpar filtros</a>
+    </div>
+</section>
+
+<h2>Produtos cadastrados</h2>
 <div class="tabela">
     <table>
         <thead>
             <tr>
-                <th>Nome</th>
+                <th>Imagem</th>
+                <th>Produto</th>
+                <th>Descrição</th>
                 <th>Categoria</th>
                 <th>Preço</th>
-                <th>Estoque</th>
-                <th>Ativo</th>
+                <th>Situação</th>
                 <th>Ações</th>
             </tr>
         </thead>
         <tbody>
             {% for produto in produtos %}
                 <tr>
+                    <td>
+                        {% if produto.imagem %}
+                            <img class="miniatura" src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+                        {% else %}
+                            <span class="miniatura sem-foto">—</span>
+                        {% endif %}
+                    </td>
                     <td>{{ produto.nome }}</td>
+                    <td>{{ produto.descricao|truncatechars:60 }}</td>
                     <td>{{ produto.categoria }}</td>
                     <td>R$ {{ produto.preco }}</td>
-                    <td>{{ produto.estoque }}</td>
-                    <td>{{ produto.ativo|yesno:"Sim,Não" }}</td>
+                    <td>{{ produto.ativo|yesno:"Ativo,Inativo" }}</td>
                     <td class="acoes">
-                        <a href="{% url 'editar_produto' produto.id %}">Editar</a>
+                        <a class="chip" href="{% url 'editar_produto' produto.id %}">Editar</a>
                         <form method="post" action="{% url 'excluir_produto' produto.id %}" onsubmit="return confirm('Excluir este produto?');">
                             {% csrf_token %}
-                            <button class="link perigo" type="submit">Excluir</button>
+                            <button class="chip perigo" type="submit">Excluir</button>
                         </form>
                     </td>
                 </tr>
             {% empty %}
-                <tr><td colspan="6">Nenhum produto cadastrado.</td></tr>
+                <tr><td colspan="7">Nenhum produto encontrado.</td></tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+<p><a href="{% url 'painel' %}">← Voltar ao painel</a></p>
 {% endblock %}

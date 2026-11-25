@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block titulo %}Painel | Ponto & Vírgula{% endblock %}
+
+{% block conteudo %}
+<section class="boas-vindas">
+    <small>Painel de controle</small>
+    <h1>Olá, {{ user.first_name|default:user.username }}!</h1>
+    <p>Bem-vinda(o) ao seu painel. Escolha uma das opções abaixo para continuar.</p>
+</section>
+
+<h2>Meu espaço</h2>
+<p class="subtitulo">Gerencie suas informações, acompanhe seus pedidos e acesse as funcionalidades da loja.</p>
+
+<div class="painel-cards">
+    <a class="painel-card" href="{% url 'minha_conta' %}">
+        <small>Minha conta</small>
+        <h3>Editar perfil</h3>
+        <p>Consulte e atualize seus dados pessoais.</p>
+        <span>Acessar perfil →</span>
+    </a>
+    <a class="painel-card" href="{% url 'meus_pedidos' %}">
+        <small>Minhas compras</small>
+        <h3>Meus pedidos</h3>
+        <p>Veja os produtos que você comprou e o total gasto.</p>
+        <span>Ver pedidos →</span>
+    </a>
+    {% if user.is_staff %}
+        <a class="painel-card" href="{% url 'contatos' %}">
+            <small>Comunicação</small>
+            <h3>Contatos</h3>
+            <p>Consulte e gerencie as mensagens enviadas pelo site.</p>
+            <span>Gerenciar contatos →</span>
+        </a>
+        <a class="painel-card" href="{% url 'gerenciar_produtos' %}">
+            <small>Gerenciamento</small>
+            <h3>Produtos</h3>
+            <p>Cadastre, edite, filtre e acompanhe os produtos da papelaria.</p>
+            <span>Gerenciar produtos →</span>
+        </a>
+        <a class="painel-card" href="{% url 'gerenciar_equipe' %}">
+            <small>Nossa equipe</small>
+            <h3>Equipe</h3>
+            <p>Gerencie os integrantes, cargos, biografias e fotos.</p>
+            <span>Gerenciar equipe →</span>
+        </a>
+        <a class="painel-card" href="{% url 'gerar_relatorio' %}">
+            <small>Análises</small>
+            <h3>Relatórios</h3>
+            <p>Indicadores e gráficos dos produtos e serviços da loja.</p>
+            <span>Acessar relatórios →</span>
+        </a>
+    {% endif %}
+</div>
+{% endblock %}

@@ -476,3 +476,287 @@ tr:last-child td {
     background: var(--verde);
     color: var(--branco);
 }
+
+
+/* Painel (dashboard) */
+
+.boas-vindas {
+    background: var(--verde);
+    border-radius: 10px;
+    color: var(--branco);
+    margin-bottom: 28px;
+    padding: 28px 32px;
+}
+
+.boas-vindas small {
+    letter-spacing: 0.1em;
+    opacity: 0.8;
+    text-transform: uppercase;
+}
+
+.boas-vindas h1 {
+    color: var(--branco);
+    margin: 6px 0;
+}
+
+.subtitulo {
+    color: var(--cinza);
+    margin-bottom: 18px;
+}
+
+.painel-cards {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.painel-card {
+    background: var(--branco);
+    border: 1px solid var(--linha);
+    border-bottom: 4px solid var(--verde);
+    border-radius: 10px;
+    color: inherit;
+    padding: 20px;
+    text-decoration: none;
+}
+
+.painel-card:hover {
+    border-color: var(--verde);
+}
+
+.painel-card small {
+    color: var(--cinza);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.painel-card h3 {
+    margin: 6px 0;
+}
+
+.painel-card p {
+    color: var(--cinza);
+    margin-bottom: 12px;
+}
+
+.painel-card span {
+    color: var(--verde);
+    font-weight: bold;
+}
+
+.destaque-nav {
+    background: var(--coral);
+    border-radius: 6px;
+    color: var(--branco) !important;
+    padding: 4px 12px;
+}
+
+/* Indicadores, filtros e chips */
+
+.indicadores {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    margin-bottom: 24px;
+}
+
+.indicador {
+    background: var(--branco);
+    border: 1px solid var(--linha);
+    border-bottom: 3px solid var(--verde);
+    border-radius: 8px;
+    padding: 14px 18px;
+}
+
+.indicador small {
+    color: var(--cinza);
+    display: block;
+}
+
+.indicador strong {
+    font-size: 1.3rem;
+}
+
+.painel-filtros {
+    background: var(--branco);
+    border: 1px solid var(--linha);
+    border-radius: 10px;
+    margin-bottom: 28px;
+    padding: 20px 24px;
+}
+
+.painel-filtros h3 {
+    font-size: 0.95rem;
+    margin: 16px 0 8px;
+}
+
+.busca {
+    display: flex;
+    gap: 10px;
+}
+
+.busca input {
+    flex: 1;
+}
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.chip {
+    background: #e7efe9;
+    border: 0;
+    border-radius: 6px;
+    color: var(--verde-escuro);
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 0.85rem;
+    padding: 6px 12px;
+    text-decoration: none;
+}
+
+.chip:hover,
+.chip.ativo {
+    background: var(--verde);
+    color: var(--branco);
+}
+
+.chip.limpar,
+.chip.perigo {
+    background: #f6dcd6;
+    color: #8a2f1d;
+}
+
+.chip.perigo:hover {
+    background: var(--coral);
+    color: var(--branco);
+}
+
+.acoes {
+    display: flex;
+    gap: 6px;
+}
+
+.miniatura {
+    border-radius: 6px;
+    height: 48px;
+    object-fit: cover;
+    width: 48px;
+}
+
+span.miniatura {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+}
+
+.miniatura.redonda {
+    border-radius: 50%;
+}
+
+/* Catálogo: botão Comprar */
+
+.card-compra {
+    padding: 0 14px 14px;
+}
+
+.card-compra .botao {
+    text-align: center;
+    width: 100%;
+}
+
+.card-texto p {
+    color: var(--cinza);
+    font-size: 0.9rem;
+    margin: 4px 0 8px;
+}
+
+/* Meus pedidos */
+
+.pedidos {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.pedido {
+    align-items: center;
+    background: var(--branco);
+    border: 1px solid var(--linha);
+    border-radius: 10px;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 72px 1fr auto;
+    padding: 12px 18px;
+}
+
+.pedido img,
+.pedido .sem-foto {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    object-fit: cover;
+    width: 72px;
+}
+
+.pedido-texto p,
+.pedido-texto small,
+.pedido-valor small {
+    color: var(--cinza);
+}
+
+.pedido-valor {
+    text-align: right;
+}
+
+.pedido-valor strong {
+    display: block;
+    font-size: 1.15rem;
+}
+
+.total-pedidos {
+    align-items: center;
+    border-top: 2px solid var(--linha);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-top: 14px;
+}
+
+.total-pedidos strong {
+    color: var(--verde);
+    font-size: 1.5rem;
+}
+
+@media (max-width: 720px) {
+    .busca {
+        flex-direction: column;
+    }
+
+    .pedido {
+        grid-template-columns: 56px 1fr;
+    }
+
+    .pedido-valor {
+        grid-column: 1 / -1;
+        text-align: left;
+    }
+
+    .tabela {
+        overflow-x: auto;
+    }
+}
+
+.boas-vindas small {
+    color: var(--branco);
+}
+
+.tabela td:nth-child(5) {
+    white-space: nowrap;
+}
+
+.graficos {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}

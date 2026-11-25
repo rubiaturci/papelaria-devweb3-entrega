@@ -8,7 +8,7 @@
     <form class="formulario" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
-        <button class="botao" type="submit">Salvar</button>
+        <button class="botao" type="submit">{% if titulo == "Editar produto" %}Salvar alterações{% else %}Cadastrar produto{% endif %}</button>
         <a href="{% url 'gerenciar_produtos' %}">Cancelar</a>
     </form>
 </section>

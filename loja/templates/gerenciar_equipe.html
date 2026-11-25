@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block titulo %}Gerenciar equipe | Ponto & Vírgula{% endblock %}
+
+{% block conteudo %}
+<div class="titulo-acao">
+    <div>
+        <h1>Gerenciar integrantes</h1>
+        <p class="subtitulo">Cadastre, consulte, edite e exclua os integrantes.</p>
+    </div>
+    <a class="botao" href="{% url 'adicionar_integrante' %}">+ Novo integrante</a>
+</div>
+
+{% if erro %}
+    <p class="aviso error">{{ erro }}</p>
+{% else %}
+    <div class="tabela">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Foto</th>
+                    <th>Nome</th>
+                    <th>Cargo</th>
+                    <th>Biografia</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for integrante in integrantes %}
+                    <tr>
+                        <td>{{ integrante.id }}</td>
+                        <td>
+                            {% if integrante.foto_url %}
+                                <img class="miniatura redonda" src="{{ integrante.foto_url }}" alt="Foto de {{ integrante.nome }}">
+                            {% else %}
+                                <span class="miniatura redonda sem-foto">{{ integrante.nome|first|upper }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ integrante.nome }}</td>
+                        <td>{{ integrante.cargo }}</td>
+                        <td>{{ integrante.biografia|truncatechars:80 }}</td>
+                        <td class="acoes">
+                            <a class="chip" href="{% url 'editar_integrante' integrante.id %}">Editar</a>
+                            <form method="post" action="{% url 'excluir_integrante' integrante.id %}" onsubmit="return confirm('Excluir este integrante?');">
+                                {% csrf_token %}
+                                <button class="chip perigo" type="submit">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="6">Nenhum integrante cadastrado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <p class="subtitulo">Total de integrantes cadastrados: {{ integrantes|length }}</p>
+{% endif %}
+
+<p><a href="{% url 'painel' %}">← Voltar ao painel</a></p>
+{% endblock %}

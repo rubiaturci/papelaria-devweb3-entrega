@@ -10,9 +10,12 @@ class ProdutoForm(forms.ModelForm):
 
 
 class ContatoForm(forms.ModelForm):
+    # No formulário o telefone é obrigatório, como na demonstração.
+    telefone = forms.CharField(max_length=20)
+
     class Meta:
         model = Contato
-        fields = ["nome", "email", "telefone", "mensagem"]
+        fields = ["nome", "telefone", "email", "mensagem"]
 
 
 class IntegranteForm(forms.Form):

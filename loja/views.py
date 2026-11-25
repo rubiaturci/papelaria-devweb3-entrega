@@ -3,8 +3,8 @@ import requests
 
 from django.contrib import messages
 from django.core.cache import cache
-from django.contrib.auth.decorators import user_passes_test
-from django.db.models import Count, DecimalField, F, ProtectedError, Sum
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.db.models import Count, DecimalField, F, Max, Min, ProtectedError, Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from rest_framework import status
@@ -13,7 +13,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from .forms import ContatoForm, IntegranteForm, ProdutoForm
-from .models import Categoria, Contato, Produto, Servico
+from .models import Categoria, Contato, Pedido, Produto, Servico
 from .serializers import CategoriaSerializer
 from .supabase_client import get_supabase
 
@@ -31,8 +31,19 @@ def inicio(request):
     return render(request, "inicio.html", {"destaques": destaques})
 
 
+def buscar_integrantes():
+    """Lê os integrantes no Supabase. Devolve (lista, erro)."""
+    try:
+        resposta = get_supabase().table("integrantes").select("*").order("id").execute()
+    except Exception:
+        logger.exception("Falha ao consultar integrantes")
+        return [], "Não foi possível carregar a equipe agora. Verifique a conexão com o Supabase."
+    return resposta.data, None
+
+
 def quem_somos(request):
-    return render(request, "quem_somos.html")
+    integrantes, erro = buscar_integrantes()
+    return render(request, "quem_somos.html", {"integrantes": integrantes, "erro": erro})
 
 
 def servicos(request):
@@ -86,21 +97,28 @@ def buscar_produtos_api():
     return produtos_api
 
 
-def produtos(request):
-    # Produtos vindos da API externa (exibidos abaixo do catálogo)
-    produtos_api = buscar_produtos_api()
+FAIXAS_PRECO = [
+    ("ate20", "Até R$ 20"),
+    ("20a50", "R$ 20 - R$ 50"),
+    ("acima50", "Acima de R$ 50"),
+]
+ORDENS = [("menor", "Menor preço"), ("maior", "Maior preço"), ("nome", "Nome")]
 
-    lista = Produto.objects.filter(ativo=True).select_related("categoria")
 
-    busca = request.GET.get("busca", "").strip()
+def filtrar_produtos(lista, parametros):
+    """Aplica busca, categoria, faixa de preço e ordenação vindos da URL.
+
+    Usado no catálogo público e no gerenciamento de produtos.
+    """
+    busca = parametros.get("busca", "").strip()
     if busca:
         lista = lista.filter(nome__icontains=busca)
 
-    categoria = request.GET.get("categoria", "")
+    categoria = parametros.get("categoria", "")
     if categoria.isdecimal() and len(categoria) < 10:
         lista = lista.filter(categoria_id=categoria)
 
-    preco = request.GET.get("preco", "")
+    preco = parametros.get("preco", "")
     if preco == "ate20":
         lista = lista.filter(preco__lte=20)
     elif preco == "20a50":
@@ -108,11 +126,27 @@ def produtos(request):
     elif preco == "acima50":
         lista = lista.filter(preco__gt=50)
 
-    ordem = request.GET.get("ordem", "")
+    ordem = parametros.get("ordem", "")
     if ordem == "menor":
-        lista = lista.order_by("preco")
+        lista = lista.order_by("preco", "nome")
     elif ordem == "maior":
-        lista = lista.order_by("-preco")
+        lista = lista.order_by("-preco", "nome")
+    elif ordem == "nome":
+        lista = lista.order_by("nome")
+
+    return lista, {"busca": busca, "categoria": categoria, "preco": preco, "ordem": ordem}
+
+
+def produtos(request):
+    # Produtos vindos da API externa (exibidos abaixo do catálogo)
+    produtos_api = buscar_produtos_api()
+
+    lista, filtros = filtrar_produtos(
+        Produto.objects.filter(ativo=True).select_related("categoria"), request.GET
+    )
+    busca, categoria, preco, ordem = (
+        filtros["busca"], filtros["categoria"], filtros["preco"], filtros["ordem"]
+    )
 
     categorias_com_total = list(
         Categoria.objects.filter(ativo=True).annotate(total=Count("produtos")).order_by("nome")
@@ -151,8 +185,24 @@ def novo_contato(request):
 
 @so_equipe
 def gerenciar_produtos(request):
-    lista = Produto.objects.select_related("categoria")
-    return render(request, "gerenciar_produtos.html", {"produtos": lista})
+    todos = Produto.objects.select_related("categoria")
+    lista, filtros = filtrar_produtos(todos, request.GET)
+    resumo = todos.aggregate(
+        total=Count("id"),
+        menor=Min("preco"),
+        maior=Max("preco"),
+        ativos=Count("id", filter=Q(ativo=True)),
+        inativos=Count("id", filter=Q(ativo=False)),
+    )
+    contexto = {
+        "produtos": lista,
+        "resumo": resumo,
+        "categorias": Categoria.objects.order_by("nome"),
+        "faixas_preco": FAIXAS_PRECO,
+        "ordens": ORDENS,
+        **filtros,
+    }
+    return render(request, "gerenciar_produtos.html", contexto)
 
 
 @so_equipe
@@ -227,8 +277,41 @@ def adicionar_integrante(request):
             form.add_error(None, "Não foi possível salvar. Verifique a conexão com o Supabase.")
         else:
             messages.success(request, "Integrante adicionado.")
-            return redirect("integrantes")
-    return render(request, "integrante_form.html", {"form": form})
+            return redirect("gerenciar_equipe")
+    return render(request, "integrante_form.html", {"form": form, "titulo": "Novo integrante"})
+
+
+@so_equipe
+def gerenciar_equipe(request):
+    integrantes, erro = buscar_integrantes()
+    return render(request, "gerenciar_equipe.html", {"integrantes": integrantes, "erro": erro})
+
+
+@so_equipe
+def editar_integrante(request, id):
+    if request.method == "POST":
+        form = IntegranteForm(request.POST)
+        if form.is_valid():
+            try:
+                get_supabase().table("integrantes").update(form.cleaned_data).eq("id", id).execute()
+            except Exception:
+                logger.exception("Falha ao editar integrante")
+                form.add_error(None, "Não foi possível salvar. Verifique a conexão com o Supabase.")
+            else:
+                messages.success(request, "Integrante atualizado.")
+                return redirect("gerenciar_equipe")
+    else:
+        try:
+            resposta = get_supabase().table("integrantes").select("*").eq("id", id).execute()
+        except Exception:
+            logger.exception("Falha ao carregar integrante")
+            messages.error(request, "Não foi possível carregar o integrante. Tente novamente.")
+            return redirect("gerenciar_equipe")
+        if not resposta.data:
+            messages.error(request, "Integrante não encontrado.")
+            return redirect("gerenciar_equipe")
+        form = IntegranteForm(initial=resposta.data[0])
+    return render(request, "integrante_form.html", {"form": form, "titulo": "Editar integrante"})
 
 
 @so_equipe
@@ -241,7 +324,7 @@ def excluir_integrante(request, id):
         messages.error(request, "Não foi possível excluir. Tente novamente.")
     else:
         messages.success(request, "Integrante excluído.")
-    return redirect("integrantes")
+    return redirect("gerenciar_equipe")
 
 
 # API de categorias (leitura pública, alterações só com login)
@@ -310,6 +393,11 @@ def gerar_relatorio(request):
         "servicos_por_grupo": servicos_por_grupo.items(),
         "total_produtos": Produto.objects.count(),
         "total_ativos": produtos_ativos.count(),
+        "total_inativos": Produto.objects.filter(ativo=False).count(),
+        "grafico_produtos_situacao": [
+            produtos_ativos.count(),
+            Produto.objects.filter(ativo=False).count(),
+        ],
         "valor_estoque": valor_estoque,
         "estoque_baixo": produtos_ativos.filter(estoque__lte=5).order_by("estoque", "nome"),
         "por_categoria": Categoria.objects.annotate(total=Count("produtos")).order_by("-total", "nome"),
@@ -317,3 +405,33 @@ def gerar_relatorio(request):
         "total_servicos": Servico.objects.filter(ativo=True).count(),
     }
     return render(request, "relatorio.html", contexto)
+
+
+# Painel do usuário e pedidos
+
+
+@login_required
+def painel(request):
+    return render(request, "painel.html")
+
+
+@login_required
+@require_POST
+def comprar(request, id):
+    produto = get_object_or_404(Produto, id=id, ativo=True)
+    Pedido.objects.create(
+        usuario=request.user,
+        produto=produto,
+        nome=produto.nome,
+        descricao=produto.descricao,
+        preco=produto.preco,
+    )
+    messages.success(request, f"Compra registrada: {produto.nome}.")
+    return redirect("meus_pedidos")
+
+
+@login_required
+def meus_pedidos(request):
+    pedidos = Pedido.objects.filter(usuario=request.user).select_related("produto")
+    total = pedidos.aggregate(total=Sum("preco"))["total"] or 0
+    return render(request, "meus_pedidos.html", {"pedidos": pedidos, "total": total})

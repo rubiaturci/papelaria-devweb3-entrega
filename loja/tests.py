@@ -45,9 +45,15 @@ class PaginasPublicasTests(BaseTest):
                 self.assertEqual(resposta.status_code, 200)
 
     def test_contato_e_salvo(self):
-        dados = {"nome": "Ana", "email": "ana@exemplo.com", "mensagem": "Oi"}
+        dados = {"nome": "Ana", "telefone": "11999990000", "email": "ana@exemplo.com", "mensagem": "Oi"}
         self.client.post(reverse("novo_contato"), dados)
         self.assertEqual(Contato.objects.count(), 1)
+
+    def test_contato_sem_campo_obrigatorio_e_recusado(self):
+        dados = {"nome": "Ana", "email": "ana@exemplo.com", "mensagem": "Oi"}
+        resposta = self.client.post(reverse("novo_contato"), dados)
+        self.assertEqual(resposta.status_code, 200)
+        self.assertEqual(Contato.objects.count(), 0)
 
 
 class PermissoesTests(BaseTest):

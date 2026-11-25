@@ -4,12 +4,14 @@
 
 {% block conteudo %}
 <section class="caixa">
+    <small>Segurança da conta</small>
     <h1>Alterar senha</h1>
+    <p class="subtitulo">Informe a senha atual e escolha uma nova senha segura.</p>
     <form class="formulario" method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button class="botao" type="submit">Salvar</button>
-        <a href="{% url 'minha_conta' %}">Cancelar</a>
+        <button class="botao" type="submit">Alterar minha senha</button>
     </form>
+    <p><a href="{% url 'minha_conta' %}">← Voltar ao meu perfil</a></p>
 </section>
 {% endblock %}

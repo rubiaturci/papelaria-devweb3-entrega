@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block titulo %}Meus pedidos | Ponto & Vírgula{% endblock %}
+
+{% block conteudo %}
+<div class="titulo-acao">
+    <div>
+        <h1>Meus pedidos</h1>
+        <p class="subtitulo">Acompanhe todos os produtos que você comprou.</p>
+    </div>
+    <a class="botao" href="{% url 'produtos' %}">Continuar comprando</a>
+</div>
+
+<div class="pedidos">
+    {% for pedido in pedidos %}
+        <article class="pedido">
+            {% if pedido.produto and pedido.produto.imagem %}
+                <img src="{{ pedido.produto.imagem.url }}" alt="{{ pedido.nome }}">
+            {% else %}
+                <div class="sem-foto">Sem foto</div>
+            {% endif %}
+            <div class="pedido-texto">
+                <h3>{{ pedido.nome }}</h3>
+                <p>{{ pedido.descricao|truncatechars:90 }}</p>
+                <small>Comprado em: {{ pedido.criado_em|date:"d/m/Y H:i" }}</small>
+            </div>
+            <div class="pedido-valor">
+                <small>Valor</small>
+                <strong>R$ {{ pedido.preco }}</strong>
+            </div>
+        </article>
+    {% empty %}
+        <p>Você ainda não fez nenhuma compra.</p>
+    {% endfor %}
+</div>
+
+<div class="total-pedidos">
+    <span>Total das compras</span>
+    <strong>R$ {{ total|floatformat:2 }}</strong>
+</div>
+
+<p><a href="{% url 'painel' %}">← Voltar ao painel</a></p>
+{% endblock %}

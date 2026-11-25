@@ -1,15 +1,24 @@
 {% extends "base.html" %}
 
-{% block titulo %}Minha conta | Ponto & Vírgula{% endblock %}
+{% block titulo %}Meu perfil | Ponto & Vírgula{% endblock %}
 
 {% block conteudo %}
 <section class="caixa">
-    <h1>Olá, {{ user.username }}!</h1>
+    <small>Minha conta</small>
+    <h1>Meu perfil</h1>
+    <p class="subtitulo">Usuário: <strong>{{ user.username }}</strong>. Mantenha seus dados atualizados.</p>
+
+    <h2>Informações pessoais</h2>
     <form class="formulario" method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button class="botao" type="submit">Salvar</button>
+        <button class="botao" type="submit">Salvar alterações</button>
     </form>
-    <p><a href="{% url 'alterar_senha' %}">Alterar senha</a></p>
+
+    <h2>Segurança da conta</h2>
+    <p>Altere sua senha periodicamente para manter a conta protegida.</p>
+    <p><a class="botao secundario" href="{% url 'alterar_senha' %}">Alterar senha</a></p>
+
+    <p><a href="{% url 'painel' %}">← Voltar ao painel</a></p>
 </section>
 {% endblock %}
