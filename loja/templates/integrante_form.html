@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block titulo %}{{ titulo }} | Ponto & Vírgula{% endblock %}
 
@@ -11,7 +12,9 @@
         {{ form.as_p }}
         {% if form.foto_url.value %}
             <p>Foto atual:</p>
-            <img class="foto-previa" src="{{ form.foto_url.value }}" alt="Foto atual do integrante" onerror="this.hidden=true;">
+            <img class="foto-previa" src="{{ form.foto_url.value }}" alt="Foto atual do integrante" onerror="this.onerror=null;this.src='{% static 'images/avatar-equipe.svg' %}';">
+        {% else %}
+            <img class="foto-previa" src="{% static 'images/avatar-equipe.svg' %}" alt="Avatar ilustrado padrão">
         {% endif %}
         <button class="botao" type="submit">{% if titulo == "Editar integrante" %}Salvar alterações{% else %}Cadastrar integrante{% endif %}</button>
         <a href="{% url 'gerenciar_equipe' %}">Cancelar</a>

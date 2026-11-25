@@ -784,3 +784,12 @@ span.miniatura {
 .foto-previa { width: 160px; max-width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; margin-bottom: 16px; }
 .foto-previa[hidden] { display: none; }
 @media (max-width: 640px) { .painel-cards { grid-template-columns: 1fr; } }
+
+/* Acabamento do catálogo e gráficos da referência */
+.card-produto img,.card-produto .sem-foto { height: 165px; width:100%; aspect-ratio:auto; object-fit:contain; }
+.card-produto .card-texto { display:flex; flex-direction:column; gap:4px; }
+.card-produto > a { display:flex; flex-direction:column; }
+.card-produto > a .card-texto { flex:1; }
+.card-produto .card-texto strong { margin-top:auto; }
+.chart-frame { height:230px; position:relative; min-width:0; }
+.relatorio-graficos > .card { min-width:0; }

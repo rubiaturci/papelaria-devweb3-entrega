@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block titulo %}Quem Somos | Ponto & Vírgula{% endblock %}
 
@@ -41,9 +42,9 @@
             <article class="card pessoa">
                 {% if integrante.foto_url %}
                     <img class="avatar-equipe" src="{{ integrante.foto_url }}" alt="Foto de {{ integrante.nome }}" onerror="this.hidden=true;this.nextElementSibling.hidden=false;">
-                    <div class="inicial avatar-equipe" hidden aria-label="Avatar de {{ integrante.nome }}">{{ integrante.nome|first|upper }}</div>
+                    <img class="avatar-equipe" src="{% static 'images/avatar-equipe.svg' %}" alt="Avatar ilustrado de {{ integrante.nome }}" hidden aria-label="Avatar de {{ integrante.nome }}">
                 {% else %}
-                    <div class="inicial avatar-equipe" aria-label="Avatar de {{ integrante.nome }}">{{ integrante.nome|first|upper }}</div>
+                    <img class="avatar-equipe" src="{% static 'images/avatar-equipe.svg' %}" alt="Avatar ilustrado de {{ integrante.nome }}" aria-label="Avatar de {{ integrante.nome }}">
                 {% endif %}
                 <div class="card-texto">
                     <h3>{{ integrante.nome }}</h3>

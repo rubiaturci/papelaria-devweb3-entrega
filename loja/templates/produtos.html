@@ -76,27 +76,4 @@
     {% endfor %}
 </ul>
 
-<h2>Gráfico de produtos por categoria</h2>
-<div class="card card-texto grafico-catalogo">
-    <canvas id="graficocategoria"></canvas>
-</div>
-
-{% comment %} CONVERTE OS dados recebidos do django em json {% endcomment %}
-{{ grafico_categorias_labels|json_script:"dados-categorias-labels" }}
-{{ grafico_categorias_valores|json_script:"dados-categorias-valores" }}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script>
-    const labelsCategorias = JSON.parse(document.getElementById("dados-categorias-labels").textContent);
-    const valoresCategorias = JSON.parse(document.getElementById("dados-categorias-valores").textContent);
-
-    new Chart(document.getElementById("graficocategoria"), {
-        type: "bar",
-        data: {
-            labels: labelsCategorias,
-            datasets: [{ label: "Produtos", data: valoresCategorias, backgroundColor: "#2e7d5b" }],
-        },
-        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } },
-    });
-</script>
-
 {% endblock %}
