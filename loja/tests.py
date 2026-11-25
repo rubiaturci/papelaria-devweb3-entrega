@@ -229,6 +229,13 @@ class PainelTests(BaseTest):
         self.assertRedirects(resposta, reverse("painel"))
 
 
+    def test_login_admin_leva_ao_django_admin(self):
+        resposta = self.client.post(
+            reverse("login"), {"username": "equipe", "password": "senha-teste-123"}
+        )
+        self.assertRedirects(resposta, reverse("admin:index"), fetch_redirect_response=False)
+
+
 class PedidosTests(BaseTest):
     def test_comprar_exige_login_e_post(self):
         url = reverse("comprar", args=[self.produto.id])

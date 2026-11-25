@@ -778,3 +778,9 @@ span.miniatura {
 .relatorio-extra { margin-top: 24px; }
 .grafico-servicos { max-width: 440px; margin-top: 20px; }
 @media (max-width: 640px) { .relatorio-resumo, .relatorio-graficos { grid-template-columns: 1fr; } }
+
+/* Referência da demonstração: dashboard em duas colunas e foto na edição. */
+.painel-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.foto-previa { width: 160px; max-width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; margin-bottom: 16px; }
+.foto-previa[hidden] { display: none; }
+@media (max-width: 640px) { .painel-cards { grid-template-columns: 1fr; } }

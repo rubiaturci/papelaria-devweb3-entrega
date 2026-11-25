@@ -19,7 +19,7 @@
             <a href="{% url 'integrantes' %}">Equipe</a>
             <a href="{% url 'novo_contato' %}">Contato</a>
             {% if user.is_authenticated %}
-                <a class="destaque-nav" href="{% url 'painel' %}">Painel</a>
+                <a class="destaque-nav" href="{% url 'painel' %}">Dashboard</a>
                 <form method="post" action="{% url 'logout' %}">
                     {% csrf_token %}
                     <button class="link" type="submit">Sair</button>

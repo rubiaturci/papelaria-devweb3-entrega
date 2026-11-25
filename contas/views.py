@@ -1,8 +1,19 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
+from django.urls import reverse
 
 from .forms import CadastroForm, PerfilForm
+
+
+class EntrarView(LoginView):
+    template_name = "login.html"
+
+    def get_success_url(self):
+        if self.request.user.is_staff:
+            return reverse("admin:index")
+        return super().get_success_url()
 
 
 def cadastro(request):

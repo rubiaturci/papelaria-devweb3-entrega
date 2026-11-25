@@ -4,7 +4,7 @@ from django.urls import path, reverse_lazy
 from . import views
 
 urlpatterns = [
-    path("entrar/", auth_views.LoginView.as_view(template_name="login.html"), name="login"),
+    path("entrar/", views.EntrarView.as_view(), name="login"),
     path("sair/", auth_views.LogoutView.as_view(), name="logout"),
     path("cadastro/", views.cadastro, name="cadastro"),
     path("minha-conta/", views.minha_conta, name="minha_conta"),

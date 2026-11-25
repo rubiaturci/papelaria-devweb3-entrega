@@ -1,6 +1,45 @@
 {% extends "base.html" %}
 
-{% block titulo %}Relatórios | Ponto & Vírgula{% endblock %}
+{% block titulo %}Relatórios | Ponto & Vírgula{{ grafico_categorias_labels|json_script:"dados-categorias-labels" }}
+{{ grafico_categorias_valores|json_script:"dados-categorias-valores" }}
+{{ grafico_servicos_valores|json_script:"dados-servicos-valores" }}
+{{ grafico_produtos_situacao|json_script:"dados-produtos-situacao" }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+    const labelsCategorias = JSON.parse(document.getElementById("dados-categorias-labels").textContent);
+    const valoresCategorias = JSON.parse(document.getElementById("dados-categorias-valores").textContent);
+    const valoresServicos = JSON.parse(document.getElementById("dados-servicos-valores").textContent);
+
+    new Chart(document.getElementById("graficocategoria"), {
+        type: "bar",
+        data: {
+            labels: labelsCategorias,
+            datasets: [{ label: "Produtos", data: valoresCategorias, backgroundColor: "#2e7d5b" }],
+        },
+        options: { aspectRatio: 2, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } },
+    });
+
+    new Chart(document.getElementById("graficosituacao"), {
+        type: "doughnut",
+        data: {
+            labels: ["Ativos", "Inativos"],
+            datasets: [{
+                data: JSON.parse(document.getElementById("dados-produtos-situacao").textContent),
+                backgroundColor: ["#2f5d62", "#d4a03a"],
+            }],
+        },
+        options: { aspectRatio: 2, plugins: { legend: { position: "bottom" } } },
+    });
+
+    new Chart(document.getElementById("graficoservicos"), {
+        type: "doughnut",
+        data: {
+            labels: ["Ativos", "Inativos"],
+            datasets: [{ data: valoresServicos, backgroundColor: ["#2e7d5b", "#b0b0b0"] }],
+        },
+    });
+</script>
+{% endblock %}
 
 {% block conteudo %}
 <small>Análise de dados</small>
@@ -26,44 +65,7 @@
 
 </div>
 
-{{ grafico_categorias_labels|json_script:"dados-categorias-labels" }}
-{{ grafico_categorias_valores|json_script:"dados-categorias-valores" }}
-{{ grafico_servicos_valores|json_script:"dados-servicos-valores" }}
-{{ grafico_produtos_situacao|json_script:"dados-produtos-situacao" }}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script>
-    const labelsCategorias = JSON.parse(document.getElementById("dados-categorias-labels").textContent);
-    const valoresCategorias = JSON.parse(document.getElementById("dados-categorias-valores").textContent);
-    const valoresServicos = JSON.parse(document.getElementById("dados-servicos-valores").textContent);
 
-    new Chart(document.getElementById("graficocategoria"), {
-        type: "bar",
-        data: {
-            labels: labelsCategorias,
-            datasets: [{ label: "Produtos", data: valoresCategorias, backgroundColor: "#2e7d5b" }],
-        },
-        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } },
-    });
-
-    new Chart(document.getElementById("graficosituacao"), {
-        type: "doughnut",
-        data: {
-            labels: ["Ativos", "Inativos"],
-            datasets: [{
-                data: JSON.parse(document.getElementById("dados-produtos-situacao").textContent),
-                backgroundColor: ["#2f5d62", "#d4a03a"],
-            }],
-        },
-    });
-
-    new Chart(document.getElementById("graficoservicos"), {
-        type: "doughnut",
-        data: {
-            labels: ["Ativos", "Inativos"],
-            datasets: [{ data: valoresServicos, backgroundColor: ["#2e7d5b", "#b0b0b0"] }],
-        },
-    });
-</script>
 
 <h2>Informações complementares</h2>
 <div class="grade relatorio-resumo relatorio-extra">
