@@ -793,3 +793,52 @@ span.miniatura {
 .card-produto .card-texto strong { margin-top:auto; }
 .chart-frame { height:230px; position:relative; min-width:0; }
 .relatorio-graficos > .card { min-width:0; }
+
+/* Relatórios: acabamento administrativo, restrito a esta página. */
+.relatorio { font-family: Arial, sans-serif; line-height: 1.5; }
+.relatorio-cabecalho { margin-bottom: 26px; }
+.relatorio-cabecalho small { color: var(--verde); font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+.relatorio-cabecalho h1 { color: var(--verde-escuro); font-size: clamp(1.65rem, 3vw, 2.15rem); margin: 6px 0; }
+.relatorio-cabecalho p { color: var(--cinza); margin: 0; }
+.relatorio h2 { font-size: 1.15rem; color: var(--verde-escuro); margin: 24px 0 12px; }
+.relatorio .relatorio-resumo { gap: 14px; margin-bottom: 22px; }
+.relatorio-indicador { padding: 18px 20px; border-top: 3px solid var(--verde); min-width: 0; }
+.relatorio-indicador small { display: block; line-height: 1.4; }
+.relatorio-indicador h3 { margin: 10px 0 0; font-size: clamp(1.35rem, 3vw, 2rem); color: var(--verde-escuro); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.relatorio-indicador.indicador-ativo { border-top-color: #2e7d5b; }
+.relatorio-indicador.indicador-inativo { border-top-color: #d4a03a; }
+.relatorio .relatorio-graficos { gap: 16px; margin-bottom: 24px; }
+.relatorio-grafico { padding: 18px; min-width: 0; }
+.relatorio-grafico h3 { min-height: 2.8em; margin: 0 0 10px; font-size: 1rem; color: var(--verde-escuro); }
+.relatorio .chart-frame { height: 250px; }
+.relatorio-secao { background: var(--branco); border: 1px solid var(--linha); border-radius: 10px; margin: 14px 0; }
+.relatorio-secao summary { cursor: pointer; padding: 18px 20px; font-weight: 700; color: var(--verde-escuro); display: flex; gap: 16px; align-items: center; justify-content: space-between; list-style: none; }
+.relatorio-secao summary::-webkit-details-marker { display: none; }
+.relatorio-secao summary::after { content: "+"; font-size: 1.35rem; font-weight: 400; }
+.relatorio-secao[open] summary::after { content: "−"; }
+.relatorio-secao summary small { display: block; font-size: .8rem; font-weight: 400; margin-top: 4px; color: var(--cinza); }
+.relatorio-secao summary:focus-visible { outline: 2px solid var(--verde); outline-offset: -4px; }
+.relatorio-secao[open] summary { border-bottom: 1px solid var(--linha); }
+.relatorio-secao-conteudo { padding: 20px; }
+.relatorio-secao-conteudo .relatorio-graficos { margin-bottom: 0; }
+.relatorio-tabela { padding: 16px; margin-top: 16px; }
+.relatorio-tabela h3 { font-size: 1rem; color: var(--verde-escuro); margin: 0 0 12px; }
+.relatorio-tabela .tabela { border-radius: 6px; }
+.relatorio-tabela th { background: #eef3ef; color: var(--verde-escuro); }
+.relatorio-tabela tbody tr:nth-child(even) { background: #fbf9f4; }
+.relatorio-tabela td:last-child { font-variant-numeric: tabular-nums; }
+.relatorio-alerta { color: #9c382a; font-weight: 700; background: #fae5de; border-radius: 6px; padding: 4px 10px; display: inline-block; }
+.relatorio-grupos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.relatorio-grupo { padding: 18px; }
+.relatorio-grupo h3 { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; color: var(--verde-escuro); font-size: 1rem; margin: 0 0 12px; }
+.relatorio-grupo h3 span { border-radius: 6px; background: #e7efe9; color: var(--verde); padding: 2px 8px; flex-shrink: 0; }
+.relatorio-grupo ul { padding-left: 20px; margin: 0; color: var(--texto); font-size: .9rem; }
+.relatorio-grupo li + li { margin-top: 6px; }
+.relatorio-voltar { margin-top: 24px; }
+@media (max-width: 700px) {
+    .relatorio .relatorio-resumo, .relatorio .relatorio-graficos, .relatorio-grupos { grid-template-columns: 1fr; }
+    .relatorio .chart-frame { height: 230px; }
+    .relatorio-grafico h3 { min-height: 0; }
+    .relatorio-secao-conteudo { padding: 12px; }
+    .relatorio-indicador { padding: 14px 16px; }
+}

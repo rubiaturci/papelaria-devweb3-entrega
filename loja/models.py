@@ -112,6 +112,21 @@ class Integrante(models.Model):
         db_table = "integrantes"
         ordering = ["id"]
 
+    @property
+    def avatar_padrao(self):
+        """Ilustração local para perfis fictícios sem foto válida."""
+        if not self.nome:
+            return "images/avatar-equipe.svg"
+        # Os três integrantes da demonstração têm ilustrações distintas.
+        nome = self.nome.strip().casefold()
+        avatares = {
+            "ana souza": "ana",
+            "bruno oliveira": "bruno",
+            "carla mendes": "carla",
+        }
+        perfil = avatares.get(nome, ("ana", "bruno", "carla")[sum(map(ord, nome)) % 3])
+        return f"images/avatar-{perfil}.svg"
+
     def __str__(self):
         return self.nome
 

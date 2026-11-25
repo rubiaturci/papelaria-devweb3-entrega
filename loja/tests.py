@@ -372,3 +372,27 @@ class PersistenciaMidiaTests(TestCase):
             self.assertEqual(arquivo.read(), b"imagem de teste")
         resposta = self.client.get(reverse("midia", args=[nome]))
         self.assertEqual(resposta.content, b"imagem de teste")
+
+
+class AcabamentoRelatorioTests(BaseTest):
+    def test_secoes_expansiveis_e_valor_formatado(self):
+        self.client.force_login(self.equipe)
+        self.produto.preco = Decimal("1822.20")
+        self.produto.save()
+        resposta = self.client.get(reverse("gerar_relatorio"))
+        self.assertContains(resposta, 'id="relatorio-produtos"')
+        self.assertContains(resposta, 'id="graficogruposservicos"')
+        self.assertContains(resposta, "R$ 9.111,00")
+        self.assertContains(resposta, "Serviços por tipo")
+
+    def test_avatares_distintos_nas_paginas(self):
+        nomes = ["Ana Souza", "Bruno Oliveira", "Carla Mendes"]
+        integrantes = [Integrante.objects.create(nome=nome, cargo="Equipe") for nome in nomes]
+        self.assertEqual(len({i.avatar_padrao for i in integrantes}), 3)
+        self.client.force_login(self.equipe)
+        for rota in ("quem_somos", "integrantes", "gerenciar_equipe"):
+            resposta = self.client.get(reverse(rota))
+            for integrante in integrantes:
+                self.assertContains(resposta, integrante.avatar_padrao)
+        resposta = self.client.get(reverse("editar_integrante", args=[integrantes[0].pk]))
+        self.assertContains(resposta, integrantes[0].avatar_padrao)

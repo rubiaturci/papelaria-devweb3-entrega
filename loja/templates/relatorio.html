@@ -2,89 +2,100 @@
 
 {% block titulo %}Relatórios | Ponto & Vírgula{% endblock %}
 
-
 {% block conteudo %}
-<small>Análise de dados</small>
-<h1>Relatórios de serviços</h1>
-<p class="subtitulo">Acompanhe os serviços cadastrados na papelaria.</p>
+<section class="relatorio">
+    <header class="relatorio-cabecalho">
+        <small>Análise de dados</small>
+        <h1>Relatórios de serviços</h1>
+        <p>Acompanhe os serviços cadastrados na papelaria.</p>
+    </header>
 
-
-<div class="grade relatorio-resumo">
-    <article class="card card-texto"><small>Serviços cadastrados</small><h3>{{ total_servicos_cadastrados }}</h3></article>
-    <article class="card card-texto"><small>Disponíveis (ativos)</small><h3>{{ total_servicos }}</h3></article>
-    <article class="card card-texto"><small>Indisponíveis (inativos)</small><h3>{{ total_servicos_inativos }}</h3></article>
-</div>
-<div class="grade relatorio-graficos">
-    <div class="card card-texto"><h3>Serviços por categoria</h3><div class="chart-frame"><canvas id="graficogruposservicos"></canvas></div></div>
-    <div class="card card-texto"><h3>Serviços ativos e inativos</h3><div class="chart-frame"><canvas id="graficoservicos"></canvas></div></div>
-</div>
-
-<h2>Relatório complementar de produtos</h2>
-<div class="grade relatorio-resumo">
-    <article class="card"><div class="card-texto"><small>Produtos cadastrados</small><h3>{{ total_produtos }}</h3></div></article>
-    <article class="card"><div class="card-texto"><small>Disponíveis (ativos)</small><h3>{{ total_ativos }}</h3></div></article>
-    <article class="card"><div class="card-texto"><small>Indisponíveis (inativos)</small><h3>{{ total_inativos }}</h3></div></article>
-</div>
-
-<h2>Gráficos</h2>
-<div class="grade relatorio-graficos">
-    <div class="card card-texto">
-        <h3>Quantidade de produtos por categoria</h3>
-        <div class="chart-frame"><canvas id="graficocategoria"></canvas></div>
-    </div>
-    <div class="card card-texto">
-        <h3>Situação dos produtos</h3>
-        <div class="chart-frame"><canvas id="graficosituacao"></canvas></div>
+    <div class="grade relatorio-resumo">
+        <article class="card relatorio-indicador"><small>Serviços cadastrados</small><h3>{{ total_servicos_cadastrados }}</h3></article>
+        <article class="card relatorio-indicador indicador-ativo"><small>Disponíveis (ativos)</small><h3>{{ total_servicos }}</h3></article>
+        <article class="card relatorio-indicador indicador-inativo"><small>Indisponíveis (inativos)</small><h3>{{ total_servicos_inativos }}</h3></article>
     </div>
 
-</div>
+    <h2>Visão geral</h2>
+    <div class="grade relatorio-graficos">
+        <article class="card relatorio-grafico"><h3>Serviços por categoria</h3><div class="chart-frame"><canvas id="graficogruposservicos" role="img" aria-label="Quantidade de serviços por categoria"></canvas></div></article>
+        <article class="card relatorio-grafico"><h3>Serviços ativos e inativos</h3><div class="chart-frame"><canvas id="graficoservicos" role="img" aria-label="{{ total_servicos }} serviços ativos e {{ total_servicos_inativos }} inativos"></canvas></div></article>
+    </div>
 
+    <details class="relatorio-secao" id="relatorio-produtos">
+        <summary><span>Relatório complementar de produtos<small>Indicadores e gráficos do catálogo</small></span></summary>
+        <div class="relatorio-secao-conteudo">
+            <div class="grade relatorio-resumo">
+                <article class="card relatorio-indicador"><small>Produtos cadastrados</small><h3>{{ total_produtos }}</h3></article>
+                <article class="card relatorio-indicador indicador-ativo"><small>Disponíveis (ativos)</small><h3>{{ total_ativos }}</h3></article>
+                <article class="card relatorio-indicador indicador-inativo"><small>Indisponíveis (inativos)</small><h3>{{ total_inativos }}</h3></article>
+            </div>
+            <div class="grade relatorio-graficos">
+                <article class="card relatorio-grafico"><h3>Quantidade de produtos por categoria</h3><div class="chart-frame"><canvas id="graficocategoria" role="img" aria-label="Quantidade de produtos por categoria"></canvas></div></article>
+                <article class="card relatorio-grafico"><h3>Situação dos produtos</h3><div class="chart-frame"><canvas id="graficosituacao" role="img" aria-label="{{ total_ativos }} produtos ativos e {{ total_inativos }} inativos"></canvas></div></article>
+            </div>
+        </div>
+    </details>
 
+    <details class="relatorio-secao">
+        <summary><span>Informações complementares<small>Estoque, contatos e distribuição de produtos</small></span></summary>
+        <div class="relatorio-secao-conteudo">
+            <div class="grade relatorio-resumo">
+                <article class="card relatorio-indicador"><small>Valor do estoque</small><h3>R$ {{ valor_estoque|floatformat:"2g" }}</h3></article>
+                <article class="card relatorio-indicador"><small>Mensagens de contato</small><h3>{{ total_contatos }}</h3></article>
+                <article class="card relatorio-indicador"><small>Serviços ativos</small><h3>{{ total_servicos }}</h3></article>
+            </div>
+            <article class="card relatorio-tabela">
+                <h3>Estoque baixo (até 5 unidades)</h3>
+                {% if estoque_baixo %}
+                <div class="tabela"><table>
+                    <thead><tr><th scope="col">Produto</th><th scope="col">Categoria</th><th scope="col">Estoque</th></tr></thead>
+                    <tbody>
+                    {% for produto in estoque_baixo %}
+                        <tr><td>{{ produto.nome }}</td><td>{{ produto.categoria }}</td><td><span class="relatorio-alerta">{{ produto.estoque }}</span></td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table></div>
+                {% else %}
+                <p>Nenhum produto com estoque baixo.</p>
+                {% endif %}
+            </article>
+            <article class="card relatorio-tabela">
+                <h3>Produtos por categoria</h3>
+                <div class="tabela"><table>
+                    <thead><tr><th scope="col">Categoria</th><th scope="col">Produtos</th></tr></thead>
+                    <tbody>
+                    {% for categoria in por_categoria %}
+                        <tr><td>{{ categoria.nome }}</td><td>{{ categoria.total }}</td></tr>
+                    {% empty %}
+                        <tr><td colspan="2">Nenhuma categoria cadastrada.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table></div>
+            </article>
+        </div>
+    </details>
 
-<h2>Informações complementares</h2>
-<div class="grade relatorio-resumo relatorio-extra">
-    <article class="card"><div class="card-texto"><small>Valor do estoque</small><h3>R$ {{ valor_estoque|floatformat:2 }}</h3></div></article>
-    <article class="card"><div class="card-texto"><small>Mensagens de contato</small><h3>{{ total_contatos }}</h3></div></article>
-    <article class="card"><div class="card-texto"><small>Serviços ativos</small><h3>{{ total_servicos }}</h3></div></article>
-</div>
-<h2>Estoque baixo (até 5 unidades)</h2>
-{% if estoque_baixo %}
-<table>
-    <thead><tr><th>Produto</th><th>Categoria</th><th>Estoque</th></tr></thead>
-    <tbody>
-    {% for produto in estoque_baixo %}
-        <tr><td>{{ produto.nome }}</td><td>{{ produto.categoria }}</td><td>{{ produto.estoque }}</td></tr>
-    {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p>Nenhum produto com estoque baixo.</p>
-{% endif %}
+    <details class="relatorio-secao">
+        <summary><span>Serviços por tipo<small>Consulte os serviços ativos de cada categoria</small></span></summary>
+        <div class="relatorio-secao-conteudo grade relatorio-grupos">
+            {% for grupo, itens in servicos_por_grupo %}
+                <article class="card relatorio-grupo">
+                    <h3>{{ grupo }} <span>{{ itens|length }}</span></h3>
+                    <ul>
+                    {% for servico in itens %}
+                        <li>{{ servico.nome }}</li>
+                    {% endfor %}
+                    </ul>
+                </article>
+            {% empty %}
+                <p>Nenhum serviço cadastrado.</p>
+            {% endfor %}
+        </div>
+    </details>
+    <p class="relatorio-voltar"><a href="{% url 'painel' %}">← Voltar ao Dashboard</a></p>
+</section>
 
-<h2>Produtos por categoria</h2>
-<table>
-    <thead><tr><th>Categoria</th><th>Produtos</th></tr></thead>
-    <tbody>
-    {% for categoria in por_categoria %}
-        <tr><td>{{ categoria.nome }}</td><td>{{ categoria.total }}</td></tr>
-    {% empty %}
-        <tr><td colspan="2">Nenhuma categoria cadastrada.</td></tr>
-    {% endfor %}
-    </tbody>
-</table>
-
-<h2>Serviços por tipo</h2>
-{% for grupo, itens in servicos_por_grupo %}
-    <h3>{{ grupo }} ({{ itens|length }})</h3>
-    <ul>
-    {% for servico in itens %}
-        <li>{{ servico.nome }}</li>
-    {% endfor %}
-    </ul>
-{% empty %}
-    <p>Nenhum serviço cadastrado.</p>
-{% endfor %}
-<p><a href="{% url 'painel' %}">← Voltar ao painel</a></p>
 {{ grafico_categorias_labels|json_script:"dados-categorias-labels" }}
 {{ grafico_categorias_valores|json_script:"dados-categorias-valores" }}
 {{ grafico_grupos_servicos_labels|json_script:"dados-grupos-servicos-labels" }}
@@ -93,48 +104,74 @@
 {{ grafico_produtos_situacao|json_script:"dados-produtos-situacao" }}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-    const labelsCategorias = JSON.parse(document.getElementById("dados-categorias-labels").textContent);
-    const valoresCategorias = JSON.parse(document.getElementById("dados-categorias-valores").textContent);
-    const valoresServicos = JSON.parse(document.getElementById("dados-servicos-valores").textContent);
+    const lerDados = id => JSON.parse(document.getElementById(id).textContent);
+    const verde = "#2f5d62";
+    const ocre = "#d4a03a";
+    const abreviacoes = {
+        "Acabamentos e Documentos": "Acabamentos",
+        "Impressões e Cópias": "Impressões",
+        "Papelaria Personalizada e Criativa": "Personalização",
+        "Serviços Administrativos e de Apoio": "Administrativos"
+    };
 
-    new Chart(document.getElementById("graficocategoria"), {
-        type: "bar",
-        data: {
-            labels: labelsCategorias,
-            datasets: [{ label: "Produtos", data: valoresCategorias, backgroundColor: "#2e7d5b" }],
-        },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } },
-    });
+    function rotuloCurto(nome) {
+        return abreviacoes[nome] || (nome.length > 16 ? nome.slice(0, 14) + "…" : nome);
+    }
 
-    new Chart(document.getElementById("graficosituacao"), {
-        type: "doughnut",
-        data: {
-            labels: ["Ativos", "Inativos"],
-            datasets: [{
-                data: JSON.parse(document.getElementById("dados-produtos-situacao").textContent),
-                backgroundColor: ["#2f5d62", "#d4a03a"],
-            }],
-        },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "bottom" } } },
-    });
+    function graficoBarras(id, labels, valores, titulo) {
+        return new Chart(document.getElementById(id), {
+            type: "bar",
+            data: { labels, datasets: [{ label: titulo, data: valores, backgroundColor: verde, borderRadius: 4, maxBarThickness: 52 }] },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false }, ticks: {
+                        minRotation: 0, maxRotation: 0,
+                        callback: function (valor) { return rotuloCurto(this.getLabelForValue(valor)); }
+                    } },
+                    y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: "#eee8dd" } }
+                }
+            }
+        });
+    }
 
-    new Chart(document.getElementById("graficogruposservicos"), {
-        type: "bar",
-        data: {
-            labels: JSON.parse(document.getElementById("dados-grupos-servicos-labels").textContent),
-            datasets: [{ label: "Serviços", data: JSON.parse(document.getElementById("dados-grupos-servicos-valores").textContent), backgroundColor: "#2f5d62" }],
-        },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } },
-    });
+    function graficoRosca(id, valores) {
+        return new Chart(document.getElementById(id), {
+            type: "doughnut",
+            data: { labels: ["Ativos", "Inativos"], datasets: [{ data: valores, backgroundColor: [verde, ocre], borderWidth: 2 }] },
+            options: { responsive: true, maintainAspectRatio: false, cutout: "68%", plugins: { legend: { position: "bottom", labels: { usePointStyle: true, padding: 16 } } } }
+        });
+    }
 
-    new Chart(document.getElementById("graficoservicos"), {
-        type: "doughnut",
-        data: {
-            labels: ["Ativos", "Inativos"],
-            datasets: [{ data: valoresServicos, backgroundColor: ["#2e7d5b", "#d4a03a"] }],
-        },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "bottom" } } },
-    });
+    if (typeof Chart !== "undefined") {
+        Chart.defaults.font.family = "Arial, sans-serif";
+        Chart.defaults.color = "#625e56";
+        graficoBarras("graficogruposservicos", lerDados("dados-grupos-servicos-labels"), lerDados("dados-grupos-servicos-valores"), "Serviços");
+        graficoRosca("graficoservicos", lerDados("dados-servicos-valores"));
+
+        // Os gráficos complementares só são criados quando a seção está visível.
+        const produtos = document.getElementById("relatorio-produtos");
+        let graficosProdutos = [];
+        function abrirProdutos() {
+            if (!produtos.open) return;
+            if (!graficosProdutos.length) {
+                graficosProdutos = [
+                    graficoBarras("graficocategoria", lerDados("dados-categorias-labels"), lerDados("dados-categorias-valores"), "Produtos"),
+                    graficoRosca("graficosituacao", lerDados("dados-produtos-situacao"))
+                ];
+            } else {
+                graficosProdutos.forEach(grafico => grafico.resize());
+            }
+        }
+        produtos.addEventListener("toggle", abrirProdutos);
+        abrirProdutos();
+    } else {
+        document.querySelectorAll(".chart-frame").forEach(frame => {
+            const aviso = document.createElement("p");
+            aviso.textContent = "Gráfico indisponível. Consulte os indicadores e tabelas.";
+            frame.appendChild(aviso);
+        });
+    }
 </script>
-
 {% endblock %}
