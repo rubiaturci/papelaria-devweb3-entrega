@@ -12,7 +12,7 @@ class ContasTests(TestCase):
             "password2": "UmaSenha-Forte-987",
         }
         resposta = self.client.post(reverse("cadastro"), dados)
-        self.assertRedirects(resposta, reverse("login"))
+        self.assertRedirects(resposta, reverse("painel"))
         self.assertFalse(User.objects.get(username="nova").is_staff)
 
     def test_cadastro_invalido_nao_cria(self):
@@ -56,11 +56,13 @@ class ContasTests(TestCase):
 
     def test_cliente_cadastrado_consegue_entrar_no_dashboard(self):
         dados = {"username": "cliente_novo", "email": "cliente@example.com", "password1": "Senha-Forte-Cadastro-83", "password2": "Senha-Forte-Cadastro-83"}
-        self.assertRedirects(self.client.post(reverse("cadastro"), dados), reverse("login"))
+        self.assertRedirects(self.client.post(reverse("cadastro"), dados), reverse("painel"))
         usuario = User.objects.get(username="cliente_novo")
         self.assertTrue(usuario.is_active)
         self.assertFalse(usuario.is_staff)
         self.assertFalse(usuario.is_superuser)
+        self.assertEqual(self.client.get(reverse("painel")).wsgi_request.user.pk, usuario.pk)
+        self.client.logout()
         self.assertRedirects(self.client.post(reverse("login"), {"username": dados["username"], "password": dados["password1"]}), reverse("painel"))
 
     def test_cadastro_invalido_mostra_mensagem_clara(self):
@@ -68,3 +70,21 @@ class ContasTests(TestCase):
         self.assertContains(resposta, "Não foi possível concluir o cadastro.")
         self.assertTrue(resposta.context["form"].errors)
         self.assertFalse(User.objects.filter(username="cliente").exists())
+
+    def test_login_nao_retorna_ao_cadastro_mesmo_com_next(self):
+        usuario = User.objects.create_user("cliente_fluxo", password="Senha-Teste-Fluxo-985")
+        resposta = self.client.post(reverse("login"), {"username": usuario.username, "password": "Senha-Teste-Fluxo-985", "next": reverse("cadastro")}, follow=True)
+        self.assertEqual(resposta.redirect_chain, [(reverse("painel"), 302)])
+        self.assertEqual(resposta.wsgi_request.user.pk, usuario.pk)
+
+    def test_cliente_autenticado_nao_volta_ao_cadastro(self):
+        usuario = User.objects.create_user("cliente_ativo", password="Senha-Teste-Fluxo-985")
+        self.client.force_login(usuario)
+        self.assertRedirects(self.client.get(reverse("cadastro")), reverse("painel"))
+        self.assertRedirects(self.client.get(reverse("login")), reverse("painel"))
+
+    def test_admin_autenticado_mantem_destino_admin(self):
+        usuario = User.objects.create_user("admin_fluxo", password="Senha-Teste-Fluxo-985", is_staff=True)
+        self.client.force_login(usuario)
+        self.assertRedirects(self.client.get(reverse("login")), reverse("admin:index"), fetch_redirect_response=False)
+        self.assertRedirects(self.client.get(reverse("cadastro")), reverse("admin:index"), fetch_redirect_response=False)

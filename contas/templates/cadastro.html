@@ -7,7 +7,7 @@
     <h1>Criar conta</h1>
     <p class="subtitulo">Crie sua conta de cliente para simular compras e consultar seus pedidos.</p>
     {% if form.errors %}<div class="aviso error" role="alert">Não foi possível concluir o cadastro. Confira as mensagens abaixo de cada campo e tente novamente.</div>{% endif %}
-    <form class="formulario" method="post">
+    <form class="formulario" method="post" action="{% url 'cadastro' %}">
         {% csrf_token %}
         {{ form.non_field_errors }}
         {% for campo in form %}
