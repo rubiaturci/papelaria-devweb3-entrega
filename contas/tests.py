@@ -53,3 +53,18 @@ class ContasTests(TestCase):
         self.assertTrue(usuario.check_password(nova))
         self.assertFalse(usuario.check_password("Senha-Inicial-Teste-48"))
         self.assertTrue(self.client.login(username=usuario.username, password=nova))
+
+    def test_cliente_cadastrado_consegue_entrar_no_dashboard(self):
+        dados = {"username": "cliente_novo", "email": "cliente@example.com", "password1": "Senha-Forte-Cadastro-83", "password2": "Senha-Forte-Cadastro-83"}
+        self.assertRedirects(self.client.post(reverse("cadastro"), dados), reverse("login"))
+        usuario = User.objects.get(username="cliente_novo")
+        self.assertTrue(usuario.is_active)
+        self.assertFalse(usuario.is_staff)
+        self.assertFalse(usuario.is_superuser)
+        self.assertRedirects(self.client.post(reverse("login"), {"username": dados["username"], "password": dados["password1"]}), reverse("painel"))
+
+    def test_cadastro_invalido_mostra_mensagem_clara(self):
+        resposta = self.client.post(reverse("cadastro"), {"username": "cliente", "email": "cliente@example.com", "password1": "123", "password2": "456"})
+        self.assertContains(resposta, "Não foi possível concluir o cadastro.")
+        self.assertTrue(resposta.context["form"].errors)
+        self.assertFalse(User.objects.filter(username="cliente").exists())

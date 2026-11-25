@@ -5,6 +5,7 @@
 {% block conteudo %}
 <section class="caixa">
     <h1>Entrar</h1>
+    <p class="subtitulo">Use o nome de usuário escolhido no cadastro, não o e-mail.</p>
     <form class="formulario" method="post">
         {% csrf_token %}
         {{ form.as_p }}

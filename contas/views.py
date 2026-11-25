@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
@@ -5,6 +7,8 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from .forms import CadastroForm, PerfilForm
+
+logger = logging.getLogger(__name__)
 
 
 class EntrarView(LoginView):
@@ -22,6 +26,10 @@ def cadastro(request):
         form.save()
         messages.success(request, "Cadastro feito! Agora é só entrar.")
         return redirect("login")
+    if request.method == "POST":
+        # Registra apenas os códigos de validação, nunca dados preenchidos.
+        codigos = {campo: [erro.code for erro in erros] for campo, erros in form.errors.as_data().items()}
+        logger.warning("Cadastro recusado: %s", codigos)
     return render(request, "cadastro.html", {"form": form})
 
 

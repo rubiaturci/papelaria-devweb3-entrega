@@ -906,3 +906,10 @@ main { max-width: 1180px; }
     .topo { padding: 14px 16px; }
     .topo nav { gap: 12px; }
 }
+
+/* Cadastro: instruções e erros legíveis também no celular. */
+.campo-cadastro { margin-bottom: 18px; }
+.campo-cadastro .errorlist { margin: 7px 0; font-weight: 600; }
+.campo-cadastro .helptext { line-height: 1.55; font-size: .85rem; }
+.campo-cadastro .helptext ul { list-style: disc; padding-left: 19px; margin-top: 6px; }
+.campo-cadastro input[aria-invalid="true"] { border-color: var(--coral); }

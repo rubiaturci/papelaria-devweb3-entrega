@@ -5,9 +5,19 @@
 {% block conteudo %}
 <section class="caixa">
     <h1>Criar conta</h1>
+    <p class="subtitulo">Crie sua conta de cliente para simular compras e consultar seus pedidos.</p>
+    {% if form.errors %}<div class="aviso error" role="alert">Não foi possível concluir o cadastro. Confira as mensagens abaixo de cada campo e tente novamente.</div>{% endif %}
     <form class="formulario" method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form.non_field_errors }}
+        {% for campo in form %}
+            <div class="campo-cadastro">
+                {{ campo.label_tag }}
+                {{ campo }}
+                {{ campo.errors }}
+                {% if campo.help_text %}<div class="helptext" id="{{ campo.auto_id }}_helptext">{{ campo.help_text|safe }}</div>{% endif %}
+            </div>
+        {% endfor %}
         <button class="botao" type="submit">Cadastrar</button>
     </form>
     <p>Já tem conta? <a href="{% url 'login' %}">Entrar</a></p>
