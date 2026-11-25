@@ -7,3 +7,4 @@ staticfiles/
 HANDOFF.md
 db.sqlite3
 media/produtos/*_*.png
+GUIA_DE_ESTUDO.md
