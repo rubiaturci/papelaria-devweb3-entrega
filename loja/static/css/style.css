@@ -760,3 +760,21 @@ span.miniatura {
 .graficos {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
+
+/* Catálogo, equipe e relatórios */
+.card-produto { display: flex; flex-direction: column; }
+.card-produto > a { display: block; flex: 1; }
+.card-produto img { aspect-ratio: 4 / 3; object-fit: contain; padding: 12px; background: var(--branco); }
+.card-produto .sem-foto { aspect-ratio: 4 / 3; }
+.detalhe img { object-fit: contain; background: var(--branco); }
+.grafico-catalogo { max-width: 600px; }
+.categorias-lista { padding-left: 20px; margin-bottom: 18px; }
+.pessoa { text-align: center; padding-top: 20px; }
+.pessoa .avatar-equipe { width: 112px; height: 112px; border-radius: 50%; margin: 0 auto; object-fit: cover; }
+.pessoa .inicial { font-size: 2.5rem; }
+.avatar-equipe[hidden], .miniatura[hidden] { display: none; }
+.relatorio-resumo { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.relatorio-graficos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.relatorio-extra { margin-top: 24px; }
+.grafico-servicos { max-width: 440px; margin-top: 20px; }
+@media (max-width: 640px) { .relatorio-resumo, .relatorio-graficos { grid-template-columns: 1fr; } }

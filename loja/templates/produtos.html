@@ -37,8 +37,38 @@
     <a href="{% url 'produtos' %}">Limpar</a>
 </form>
 
-<h2>Categorias</h2>
-<ul>
+<h2>Produtos da papelaria</h2>
+<div class="grade">
+    {% for produto in produtos %}
+        {% include "_card_produto.html" %}
+    {% empty %}
+        <p>Nenhum produto encontrado.</p>
+    {% endfor %}
+</div>
+
+<h2>Produtos da API — catálogo parceiro</h2>
+<p class="subtitulo">Itens de demonstração de uma API externa, separados do estoque da papelaria.</p>
+
+<div class="grade">
+    {% for produto in produtos_api %}
+        <article class="card card-produto">
+            {% if produto.image %}
+                <img src="{{ produto.image }}" alt="{{ produto.title }}" loading="lazy">
+            {% else %}
+                <div class="sem-foto">Sem foto</div>
+            {% endif %}
+            <div class="card-texto">
+                <small>{{ produto.category }}</small>
+                <h3>{{ produto.title }}</h3>
+                <strong>Preço informado pela API: {{ produto.price }}</strong>
+            </div>
+        </article>
+    {% empty %}
+        <p>Não foi possível carregar os produtos da API.</p>
+    {% endfor %}
+</div>
+<h2>Resumo do catálogo</h2>
+<ul class="categorias-lista">
     {% for item in categorias %}
         <li><a href="?categoria={{ item.id }}">{{ item.nome }}</a> ({{ item.total }})</li>
     {% empty %}
@@ -47,7 +77,7 @@
 </ul>
 
 <h2>Gráfico de produtos por categoria</h2>
-<div class="card card-texto">
+<div class="card card-texto grafico-catalogo">
     <canvas id="graficocategoria"></canvas>
 </div>
 
@@ -69,33 +99,4 @@
     });
 </script>
 
-<h2>Produtos</h2>
-<div class="grade">
-    {% for produto in produtos %}
-        {% include "_card_produto.html" %}
-    {% empty %}
-        <p>Nenhum produto encontrado.</p>
-    {% endfor %}
-</div>
-
-<h2>Produtos da API</h2>
-
-<div class="grade">
-    {% for produto in produtos_api %}
-        <article class="card">
-            {% if produto.image %}
-                <img src="{{ produto.image }}" alt="{{ produto.title }}" loading="lazy">
-            {% else %}
-                <div class="sem-foto">Sem foto</div>
-            {% endif %}
-            <div class="card-texto">
-                <small>{{ produto.category }}</small>
-                <h3>{{ produto.title }}</h3>
-                <strong>R$ {{ produto.price }}</strong>
-            </div>
-        </article>
-    {% empty %}
-        <p>Não foi possível carregar os produtos da API.</p>
-    {% endfor %}
-</div>
 {% endblock %}

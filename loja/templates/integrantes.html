@@ -14,9 +14,10 @@
         {% for integrante in integrantes %}
             <article class="card pessoa">
                 {% if integrante.foto_url %}
-                    <img src="{{ integrante.foto_url }}" alt="Foto de {{ integrante.nome }}">
+                    <img class="avatar-equipe" src="{{ integrante.foto_url }}" alt="Foto de {{ integrante.nome }}" onerror="this.hidden=true;this.nextElementSibling.hidden=false;">
+                    <div class="inicial avatar-equipe" hidden aria-label="Avatar de {{ integrante.nome }}">{{ integrante.nome|first|upper }}</div>
                 {% else %}
-                    <div class="inicial">{{ integrante.nome|first|upper }}</div>
+                    <div class="inicial avatar-equipe" aria-label="Avatar de {{ integrante.nome }}">{{ integrante.nome|first|upper }}</div>
                 {% endif %}
                 <div class="card-texto">
                     <h3>{{ integrante.nome }}</h3>

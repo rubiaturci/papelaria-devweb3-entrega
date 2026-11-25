@@ -29,7 +29,8 @@
                         <td>{{ integrante.id }}</td>
                         <td>
                             {% if integrante.foto_url %}
-                                <img class="miniatura redonda" src="{{ integrante.foto_url }}" alt="Foto de {{ integrante.nome }}">
+                                <img class="miniatura redonda" src="{{ integrante.foto_url }}" alt="Foto de {{ integrante.nome }}" onerror="this.hidden=true;this.nextElementSibling.hidden=false;">
+                                <span class="miniatura redonda sem-foto" hidden>{{ integrante.nome|first|upper }}</span>
                             {% else %}
                                 <span class="miniatura redonda sem-foto">{{ integrante.nome|first|upper }}</span>
                             {% endif %}

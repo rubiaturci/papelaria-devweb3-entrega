@@ -7,17 +7,14 @@
 <h1>Relatórios</h1>
 <p class="subtitulo">Acompanhe os dados e a situação dos produtos cadastrados na papelaria.</p>
 
-<div class="grade">
+<div class="grade relatorio-resumo">
     <article class="card"><div class="card-texto"><small>Produtos cadastrados</small><h3>{{ total_produtos }}</h3></div></article>
     <article class="card"><div class="card-texto"><small>Disponíveis (ativos)</small><h3>{{ total_ativos }}</h3></div></article>
     <article class="card"><div class="card-texto"><small>Indisponíveis (inativos)</small><h3>{{ total_inativos }}</h3></div></article>
-    <article class="card"><div class="card-texto"><small>Valor do estoque</small><h3>R$ {{ valor_estoque|floatformat:2 }}</h3></div></article>
-    <article class="card"><div class="card-texto"><small>Mensagens de contato</small><h3>{{ total_contatos }}</h3></div></article>
-    <article class="card"><div class="card-texto"><small>Serviços ativos</small><h3>{{ total_servicos }}</h3></div></article>
 </div>
 
 <h2>Gráficos</h2>
-<div class="grade graficos">
+<div class="grade relatorio-graficos">
     <div class="card card-texto">
         <h3>Quantidade de produtos por categoria</h3>
         <canvas id="graficocategoria"></canvas>
@@ -26,10 +23,7 @@
         <h3>Situação dos produtos</h3>
         <canvas id="graficosituacao"></canvas>
     </div>
-    <div class="card card-texto">
-        <h3>Serviços ativos e inativos</h3>
-        <canvas id="graficoservicos"></canvas>
-    </div>
+
 </div>
 
 {{ grafico_categorias_labels|json_script:"dados-categorias-labels" }}
@@ -71,6 +65,16 @@
     });
 </script>
 
+<h2>Informações complementares</h2>
+<div class="grade relatorio-resumo relatorio-extra">
+    <article class="card"><div class="card-texto"><small>Valor do estoque</small><h3>R$ {{ valor_estoque|floatformat:2 }}</h3></div></article>
+    <article class="card"><div class="card-texto"><small>Mensagens de contato</small><h3>{{ total_contatos }}</h3></div></article>
+    <article class="card"><div class="card-texto"><small>Serviços ativos</small><h3>{{ total_servicos }}</h3></div></article>
+</div>
+    <div class="card card-texto grafico-servicos">
+        <h3>Serviços ativos e inativos</h3>
+        <canvas id="graficoservicos"></canvas>
+    </div>
 <h2>Estoque baixo (até 5 unidades)</h2>
 {% if estoque_baixo %}
 <table>
