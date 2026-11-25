@@ -389,6 +389,15 @@ class AcabamentoRelatorioTests(BaseTest):
         nomes = ["Ana Souza", "Bruno Oliveira", "Carla Mendes"]
         integrantes = [Integrante.objects.create(nome=nome, cargo="Equipe") for nome in nomes]
         self.assertEqual(len({i.avatar_padrao for i in integrantes}), 3)
+        from django.contrib.staticfiles import finders
+        from PIL import Image
+        for integrante in integrantes:
+            self.assertTrue(integrante.avatar_padrao.endswith(".jpg"))
+            caminho = finders.find(integrante.avatar_padrao)
+            self.assertIsNotNone(caminho)
+            with Image.open(caminho) as imagem:
+                self.assertEqual(imagem.format, "JPEG")
+                imagem.verify()
         self.client.force_login(self.equipe)
         for rota in ("quem_somos", "integrantes", "gerenciar_equipe"):
             resposta = self.client.get(reverse(rota))

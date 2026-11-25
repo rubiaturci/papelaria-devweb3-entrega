@@ -42,9 +42,9 @@
             <article class="card pessoa">
                 {% if integrante.foto_url %}
                     <img class="avatar-equipe" src="{{ integrante.foto_url }}" alt="Foto de {{ integrante.nome }}" onerror="this.hidden=true;this.nextElementSibling.hidden=false;">
-                    <img class="avatar-equipe" src="{% static integrante.avatar_padrao %}" alt="Avatar ilustrado de {{ integrante.nome }}" hidden aria-label="Avatar de {{ integrante.nome }}">
+                    <img class="avatar-equipe" src="{% static integrante.avatar_padrao %}" alt="Retrato demonstrativo de {{ integrante.nome }}" hidden aria-label="Avatar de {{ integrante.nome }}">
                 {% else %}
-                    <img class="avatar-equipe" src="{% static integrante.avatar_padrao %}" alt="Avatar ilustrado de {{ integrante.nome }}" aria-label="Avatar de {{ integrante.nome }}">
+                    <img class="avatar-equipe" src="{% static integrante.avatar_padrao %}" alt="Retrato demonstrativo de {{ integrante.nome }}" aria-label="Avatar de {{ integrante.nome }}">
                 {% endif %}
                 <div class="card-texto">
                     <h3>{{ integrante.nome }}</h3>
