@@ -842,3 +842,23 @@ span.miniatura {
     .relatorio-secao-conteudo { padding: 12px; }
     .relatorio-indicador { padding: 14px 16px; }
 }
+
+/* Acabamento final: mesma identidade, navegação e hierarquia do enunciado. */
+body { font-family: Arial, Helvetica, sans-serif; }
+h1, h2, h3 { line-height: 1.25; }
+.topo nav a:focus-visible, .topo nav button:focus-visible, .marca:focus-visible { outline: 2px solid #f2b880; outline-offset: 4px; }
+.equipe-grade { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.equipe-grade .pessoa { padding-top: 24px; }
+.equipe-grade .avatar-equipe { width: 144px; height: 144px; }
+.equipe-grade .card-texto { padding: 16px; }
+.equipe-titulo { margin-top: 24px; }
+.sobre-institucional { margin: 24px 0; border: 1px solid var(--linha); border-radius: 10px; background: var(--branco); }
+.sobre-institucional summary { cursor: pointer; padding: 16px 20px; color: var(--verde-escuro); font-weight: 600; }
+.sobre-institucional .sobre { margin: 0; padding: 0 16px 16px; }
+.catalogo-grade { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.catalogo-grade .card-produto { min-width: 0; }
+.catalogo-grade .card-texto { overflow-wrap: anywhere; }
+.filtros-catalogo { margin: 16px 0 24px; }
+@media (max-width: 900px) { .catalogo-grade { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 720px) { .catalogo-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); } .equipe-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .equipe-grade { grid-template-columns: 1fr; } .catalogo-grade { grid-template-columns: 1fr; } .topo nav { gap: 12px; } }

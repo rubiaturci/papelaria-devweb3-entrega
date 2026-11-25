@@ -57,3 +57,12 @@ Reiniciar o Render não deve recriar o banco: produtos, pedidos, usuários,
 contatos, integrantes e imagens permanecem no PostgreSQL do Supabase.
 Não use flush ou apague o banco para reiniciar a aplicação.
 Os testes usam SQLite isolado mesmo que DATABASE_URL esteja configurada.
+
+NAVEGACAO FINAL
+O menu publico tem Quem Somos, Produtos, Contato e Entrar. A marca abre a Home.
+Com login, Entrar e substituido por Dashboard e Sair. A equipe publica aparece
+em Quem Somos. As rotas antigas /equipe/ e /servicos/ continuam funcionando,
+mas nao fazem parte do menu. O CRUD de produtos e acessivel pela area de
+servicos ou pelo Django Admin. Auto-Deploy do Render deve acompanhar master.
+Antes de reiniciar, confirme a existencia de backup recuperavel do Supabase.
+Nao faca deploy manual se o automatico estiver funcionando.

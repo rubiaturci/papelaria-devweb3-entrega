@@ -9,6 +9,29 @@
     <p>A Ponto &amp; Vírgula é uma papelaria de bairro que nasceu para facilitar a rotina de estudantes, professores e profissionais. Reunimos materiais escolares, itens de escritório e serviços rápidos em um só lugar.</p>
 </section>
 
+<h2 class="equipe-titulo" id="equipe">Nossa equipe</h2>
+    <div class="grade equipe-grade">
+        {% for integrante in integrantes %}
+            <article class="card pessoa">
+                {% if integrante.foto_personalizada %}
+                    <img class="avatar-equipe" src="{{ integrante.foto_personalizada }}" alt="Foto de {{ integrante.nome }}" onerror="this.hidden=true;this.nextElementSibling.hidden=false;">
+                    <img class="avatar-equipe" src="{% static integrante.avatar_padrao %}" alt="Retrato demonstrativo de {{ integrante.nome }}" hidden aria-label="Avatar de {{ integrante.nome }}">
+                {% else %}
+                    <img class="avatar-equipe" src="{% static integrante.avatar_padrao %}" alt="Retrato demonstrativo de {{ integrante.nome }}" aria-label="Avatar de {{ integrante.nome }}">
+                {% endif %}
+                <div class="card-texto">
+                    <h3>{{ integrante.nome }}</h3>
+                    <small>{{ integrante.cargo }}</small>
+                    <p>{{ integrante.biografia }}</p>
+                </div>
+            </article>
+        {% empty %}
+            <p>Nenhum integrante cadastrado.</p>
+        {% endfor %}
+    </div>
+
+<details class="sobre-institucional">
+    <summary>Conheça nossa história, missão, visão e valores</summary>
 <div class="grade sobre">
     <article class="card">
         <div class="card-texto">
@@ -35,27 +58,7 @@
         </div>
     </article>
 </div>
-
-<h2>Nossa equipe</h2>
-    <div class="grade">
-        {% for integrante in integrantes %}
-            <article class="card pessoa">
-                {% if integrante.foto_personalizada %}
-                    <img class="avatar-equipe" src="{{ integrante.foto_personalizada }}" alt="Foto de {{ integrante.nome }}" onerror="this.hidden=true;this.nextElementSibling.hidden=false;">
-                    <img class="avatar-equipe" src="{% static integrante.avatar_padrao %}" alt="Retrato demonstrativo de {{ integrante.nome }}" hidden aria-label="Avatar de {{ integrante.nome }}">
-                {% else %}
-                    <img class="avatar-equipe" src="{% static integrante.avatar_padrao %}" alt="Retrato demonstrativo de {{ integrante.nome }}" aria-label="Avatar de {{ integrante.nome }}">
-                {% endif %}
-                <div class="card-texto">
-                    <h3>{{ integrante.nome }}</h3>
-                    <small>{{ integrante.cargo }}</small>
-                    <p>{{ integrante.biografia }}</p>
-                </div>
-            </article>
-        {% empty %}
-            <p>Nenhum integrante cadastrado.</p>
-        {% endfor %}
-    </div>
+</details>
 
 <p class="centro">
     <a class="botao" href="{% url 'novo_contato' %}">Fale com a gente</a>

@@ -220,7 +220,7 @@ class PainelTests(BaseTest):
             "Editar perfil",
             "Meus pedidos",
             "Gerenciar contatos",
-            "Gerenciar produtos",
+            "Gerenciar serviços",
             "Gerenciar equipe",
             "Acessar relatórios",
         ):
@@ -466,3 +466,53 @@ class ServicosModeloOficialTests(BaseTest):
         integrante.save()
         self.assertEqual(integrante.foto_personalizada, integrante.foto_url)
         self.assertContains(self.client.get(reverse("quem_somos")), integrante.foto_url)
+
+
+class NavegacaoModeloProfessoraTests(BaseTest):
+    def links_menu(self, resposta):
+        from html.parser import HTMLParser
+
+        class Menu(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.nav = False
+                self.item = False
+                self.links = []
+            def handle_starttag(self, tag, attrs):
+                if tag == "nav":
+                    self.nav = True
+                if self.nav and tag in ("a", "button"):
+                    self.item = True
+                    self.links.append("")
+            def handle_data(self, data):
+                if self.nav and self.item:
+                    self.links[-1] += data
+            def handle_endtag(self, tag):
+                if tag in ("a", "button"):
+                    self.item = False
+                if tag == "nav":
+                    self.nav = False
+        parser = Menu()
+        parser.feed(resposta.content.decode())
+        return [item.strip() for item in parser.links]
+
+    def test_menu_publico_exatamente_quatro_opcoes(self):
+        self.assertEqual(self.links_menu(self.client.get(reverse("inicio"))), ["Quem Somos", "Produtos", "Contato", "Entrar"])
+
+    def test_menu_autenticado(self):
+        self.client.force_login(self.cliente)
+        self.assertEqual(self.links_menu(self.client.get(reverse("painel"))), ["Quem Somos", "Produtos", "Contato", "Dashboard", "Sair"])
+
+    def test_dashboard_seis_cards_na_ordem_do_pdf(self):
+        self.client.force_login(self.equipe)
+        resposta = self.client.get(reverse("painel"))
+        html = resposta.content.decode()
+        rotas = ["minha_conta", "contatos", "gerenciar_servicos", "gerenciar_equipe", "meus_pedidos", "gerar_relatorio"]
+        posicoes = [html.index(f'class="painel-card" href="{reverse(rota)}"') for rota in rotas]
+        self.assertEqual(posicoes, sorted(posicoes))
+        self.assertEqual(html.count('class="painel-card"'), 6)
+        self.assertNotContains(resposta, "Gerenciar produtos")
+        self.assertContains(self.client.get(reverse("gerenciar_servicos")), "Gerenciar produtos")
+
+    def test_catalogo_sem_resumo_redundante(self):
+        self.assertNotContains(self.client.get(reverse("produtos")), "Resumo do catálogo")

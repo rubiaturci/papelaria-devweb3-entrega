@@ -5,8 +5,9 @@
 {% block conteudo %}
 
 <h1>Produtos</h1>
+<p class="subtitulo">Confira nosso catálogo e os produtos da API externa.</p>
 
-<form class="filtros" method="get">
+<form class="filtros filtros-catalogo" method="get">
     <label>Buscar
         <input type="search" name="busca" value="{{ busca }}" placeholder="Nome do produto">
     </label>
@@ -38,7 +39,7 @@
 </form>
 
 <h2>Produtos da papelaria</h2>
-<div class="grade">
+<div class="grade catalogo-grade">
     {% for produto in produtos %}
         {% include "_card_produto.html" %}
     {% empty %}
@@ -49,7 +50,7 @@
 <h2>Produtos da API — catálogo parceiro</h2>
 <p class="subtitulo">Itens de demonstração de uma API externa, separados do estoque da papelaria.</p>
 
-<div class="grade">
+<div class="grade catalogo-grade">
     {% for produto in produtos_api %}
         <article class="card card-produto">
             {% if produto.image %}
@@ -67,13 +68,5 @@
         <p>Não foi possível carregar os produtos da API.</p>
     {% endfor %}
 </div>
-<h2>Resumo do catálogo</h2>
-<ul class="categorias-lista">
-    {% for item in categorias %}
-        <li><a href="?categoria={{ item.id }}">{{ item.nome }}</a> ({{ item.total }})</li>
-    {% empty %}
-        <li>Nenhuma categoria cadastrada.</li>
-    {% endfor %}
-</ul>
 
 {% endblock %}

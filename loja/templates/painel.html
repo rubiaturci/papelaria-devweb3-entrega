@@ -19,12 +19,6 @@
         <p>Consulte e atualize seus dados pessoais.</p>
         <span>Acessar perfil →</span>
     </a>
-    <a class="painel-card" href="{% url 'meus_pedidos' %}">
-        <small>Minhas compras</small>
-        <h3>Meus pedidos</h3>
-        <p>Veja os produtos que você comprou e o total gasto.</p>
-        <span>Ver pedidos →</span>
-    </a>
     {% if user.is_staff %}
         <a class="painel-card" href="{% url 'contatos' %}">
             <small>Comunicação</small>
@@ -44,6 +38,14 @@
             <p>Gerencie os integrantes, cargos, biografias e fotos.</p>
             <span>Gerenciar equipe →</span>
         </a>
+    {% endif %}
+    <a class="painel-card" href="{% url 'meus_pedidos' %}">
+        <small>Minhas compras</small>
+        <h3>Meus pedidos</h3>
+        <p>Veja os produtos que você comprou e o total gasto.</p>
+        <span>Ver pedidos →</span>
+    </a>
+    {% if user.is_staff %}
         <a class="painel-card" href="{% url 'gerar_relatorio' %}">
             <small>Análises</small>
             <h3>Relatórios</h3>
@@ -52,5 +54,4 @@
         </a>
     {% endif %}
 </div>
-{% if user.is_staff %}<p><a href="{% url 'gerenciar_produtos' %}">Gerenciar produtos</a></p>{% endif %}
 {% endblock %}
