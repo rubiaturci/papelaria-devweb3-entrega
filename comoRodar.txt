@@ -13,7 +13,10 @@ python manage.py runserver
 Depois abra http://127.0.0.1:8000/
 
 LOGIN DE ADMINISTRADOR
-Usuario: admin
+Crie seu próprio administrador com:
+python manage.py createsuperuser
+
+Não compartilhe senhas nem coloque credenciais no repositório.
 
 PAGINAS
 /                     inicio
