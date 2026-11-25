@@ -54,6 +54,7 @@ img {
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 12px;
+    border-bottom: 2px solid #f2b880;
 }
 
 .marca {
