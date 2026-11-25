@@ -124,7 +124,7 @@
             labels: JSON.parse(document.getElementById("dados-grupos-servicos-labels").textContent),
             datasets: [{ label: "Serviços", data: JSON.parse(document.getElementById("dados-grupos-servicos-valores").textContent), backgroundColor: "#2f5d62" }],
         },
-        options: { aspectRatio: 2, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } },
     });
 
     new Chart(document.getElementById("graficoservicos"), {
