@@ -11,10 +11,12 @@
     <h2>{{ grupo }}</h2>
     <div class="grade">
         {% for servico in itens %}
-            <article class="card">
+            <article class="card card-produto">
+                {% if servico.imagem %}<img src="{{ servico.imagem.url }}" alt="{{ servico.nome }}">{% endif %}
                 <div class="card-texto">
                     <h3>{{ servico.nome }}</h3>
                     <p>{{ servico.descricao }}</p>
+                    <strong>{% if servico.preco != None %}R$ {{ servico.preco|floatformat:"2g" }}{% else %}Preço sob consulta{% endif %}</strong>
                 </div>
             </article>
         {% endfor %}

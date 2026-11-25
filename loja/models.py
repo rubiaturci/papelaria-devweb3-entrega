@@ -46,6 +46,12 @@ class Servico(models.Model):
     grupo = models.CharField("grupo", max_length=60)
     nome = models.CharField(max_length=100)
     descricao = models.TextField("descrição", blank=True)
+    # Serviços antigos permanecem sem preço até a equipe informar um valor real.
+    preco = models.DecimalField(
+        "preço", max_digits=10, decimal_places=2, blank=True, null=True,
+        validators=[MinValueValidator(Decimal("0.01"))],
+    )
+    imagem = models.ImageField(upload_to="servicos/", blank=True, null=True)
     ativo = models.BooleanField(default=True)
 
     class Meta:

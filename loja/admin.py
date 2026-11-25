@@ -23,7 +23,7 @@ class ProdutoAdmin(admin.ModelAdmin):
 
 @admin.register(Servico)
 class ServicoAdmin(admin.ModelAdmin):
-    list_display = ("nome", "grupo", "ativo")
+    list_display = ("nome", "grupo", "preco", "ativo")
     list_filter = ("grupo", "ativo")
     search_fields = ("nome", "descricao")
 

@@ -405,3 +405,47 @@ class AcabamentoRelatorioTests(BaseTest):
                 self.assertContains(resposta, integrante.avatar_padrao)
         resposta = self.client.get(reverse("editar_integrante", args=[integrantes[0].pk]))
         self.assertContains(resposta, integrantes[0].avatar_padrao)
+
+
+class ServicosModeloOficialTests(BaseTest):
+    def test_preco_filtros_e_indicadores(self):
+        self.client.force_login(self.equipe)
+        barato = Servico.objects.create(nome="Serviço teste barato", grupo="Teste oficial", preco="10.00")
+        caro = Servico.objects.create(nome="Serviço teste caro", grupo="Teste oficial", preco="80.00")
+        consulta = Servico.objects.create(nome="Serviço teste consulta", grupo="Teste oficial")
+        resposta = self.client.get(reverse("gerenciar_servicos"), {"grupo": "Teste oficial", "ordem": "menor"})
+        self.assertEqual(list(resposta.context["servicos"]), [barato, caro, consulta])
+        self.assertEqual(resposta.context["resumo"]["menor"], Decimal("10.00"))
+        self.assertEqual(resposta.context["resumo"]["maior"], Decimal("80.00"))
+        resposta = self.client.get(reverse("gerenciar_servicos"), {"grupo": "Teste oficial", "preco": "consulta"})
+        self.assertEqual(list(resposta.context["servicos"]), [consulta])
+        resposta = self.client.get(reverse("gerenciar_servicos"), {"grupo": "Teste oficial", "preco": "ate20"})
+        self.assertEqual(list(resposta.context["servicos"]), [barato])
+
+    def test_servico_com_imagem_e_preco(self):
+        from io import BytesIO
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from django.test import override_settings
+        from PIL import Image
+        self.client.force_login(self.equipe)
+        buffer = BytesIO()
+        Image.new("RGB", (12, 12), "green").save(buffer, format="PNG")
+        imagem = SimpleUploadedFile("servico.png", buffer.getvalue(), content_type="image/png")
+        armazenamento = {"default": {"BACKEND": "loja.storage.BancoDeDadosStorage"}, "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"}}
+        with override_settings(STORAGES=armazenamento):
+            resposta = self.client.post(reverse("adicionar_servico"), {
+                "nome": "Serviço ilustrado", "grupo": "Teste oficial", "preco": "25.00",
+                "imagem": imagem, "ativo": "on",
+            })
+            self.assertRedirects(resposta, reverse("gerenciar_servicos"))
+            servico = Servico.objects.get(nome="Serviço ilustrado")
+            self.assertEqual(servico.preco, Decimal("25.00"))
+            self.assertTrue(ArquivoMidia.objects.filter(nome=servico.imagem.name).exists())
+            self.assertContains(self.client.get(reverse("editar_servico", args=[servico.pk])), "Imagem atual")
+            self.assertContains(self.client.get(reverse("servicos")), "R$ 25,00")
+
+    def test_preco_negativo_recusado(self):
+        self.client.force_login(self.equipe)
+        resposta = self.client.post(reverse("adicionar_servico"), {"nome": "Preço inválido", "grupo": "Teste", "preco": "-1", "ativo": "on"})
+        self.assertEqual(resposta.status_code, 200)
+        self.assertFalse(Servico.objects.filter(nome="Preço inválido").exists())

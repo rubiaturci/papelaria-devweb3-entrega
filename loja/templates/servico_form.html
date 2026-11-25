@@ -1,5 +1,18 @@
 {% extends "base.html" %}
 {% block titulo %}{{ titulo }} | Ponto & Vírgula{% endblock %}
 {% block conteudo %}
-<section class="caixa"><h1>{{ titulo }}</h1><form class="formulario" method="post">{% csrf_token %}{{ form.as_p }}<button class="botao" type="submit">Salvar</button> <a href="{% url 'gerenciar_servicos' %}">Cancelar</a></form></section>
+<section class="caixa">
+    <h1>{{ titulo }}</h1>
+    <p class="subtitulo">Informações do serviço</p>
+    <form class="formulario" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% if form.instance.imagem %}
+            <p>Imagem atual:</p>
+            <img class="foto-previa" src="{{ form.instance.imagem.url }}" alt="{{ form.instance.nome }}">
+        {% endif %}
+        <button class="botao" type="submit">{% if form.instance.pk %}Salvar alterações{% else %}Cadastrar serviço{% endif %}</button>
+        <a href="{% url 'gerenciar_servicos' %}">Cancelar</a>
+    </form>
+</section>
 {% endblock %}

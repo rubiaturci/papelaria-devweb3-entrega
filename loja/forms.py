@@ -30,4 +30,6 @@ class IntegranteForm(forms.ModelForm):
 class ServicoForm(forms.ModelForm):
     class Meta:
         model = Servico
-        fields = ["nome", "grupo", "descricao", "ativo"]
+        fields = ["nome", "descricao", "preco", "grupo", "imagem", "ativo"]
+        labels = {"grupo": "Categoria"}
+        help_texts = {"preco": "Deixe em branco se o valor for sob consulta."}

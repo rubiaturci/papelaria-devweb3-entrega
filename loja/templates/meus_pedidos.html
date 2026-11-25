@@ -6,7 +6,7 @@
 <div class="titulo-acao">
     <div>
         <h1>Meus pedidos</h1>
-        <p class="subtitulo">Acompanhe todos os produtos que você comprou.</p>
+        <p class="subtitulo">Confira os produtos adicionados pelo botão Comprar, as informações de cada pedido e o total das compras.</p>
     </div>
     <a class="botao" href="{% url 'produtos' %}">Continuar comprando</a>
 </div>
@@ -36,7 +36,7 @@
 
 <div class="total-pedidos">
     <span>Total das compras</span>
-    <strong>R$ {{ total|floatformat:2 }}</strong>
+    <strong>R$ {{ total|floatformat:"2g" }}</strong>
 </div>
 
 <p><a href="{% url 'painel' %}">← Voltar ao painel</a></p>

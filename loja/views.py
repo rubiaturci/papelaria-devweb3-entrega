@@ -238,25 +238,43 @@ def gerenciar_servicos(request):
     busca = request.GET.get("busca", "").strip()
     grupo = request.GET.get("grupo", "")
     situacao = request.GET.get("situacao", "")
+    preco = request.GET.get("preco", "")
+    ordem = request.GET.get("ordem", "")
     if busca:
-        lista = lista.filter(nome__icontains=busca)
+        lista = lista.filter(Q(nome__icontains=busca) | Q(descricao__icontains=busca))
     if grupo:
         lista = lista.filter(grupo=grupo)
     if situacao in ("ativo", "inativo"):
         lista = lista.filter(ativo=situacao == "ativo")
+    if preco == "ate20":
+        lista = lista.filter(preco__lte=20)
+    elif preco == "20a50":
+        lista = lista.filter(preco__gt=20, preco__lte=50)
+    elif preco == "acima50":
+        lista = lista.filter(preco__gt=50)
+    elif preco == "consulta":
+        lista = lista.filter(preco__isnull=True)
+    if ordem == "menor":
+        lista = lista.order_by(F("preco").asc(nulls_last=True), "nome")
+    elif ordem == "maior":
+        lista = lista.order_by(F("preco").desc(nulls_last=True), "nome")
+    elif ordem == "nome":
+        lista = lista.order_by("nome")
+    resumo = todos.aggregate(menor=Min("preco"), maior=Max("preco"))
     return render(request, "gerenciar_servicos.html", {
         "servicos": lista,
         "grupos": todos.order_by("grupo").values_list("grupo", flat=True).distinct(),
         "total": todos.count(),
         "ativos": todos.filter(ativo=True).count(),
         "inativos": todos.filter(ativo=False).count(),
+        "resumo": resumo,
         "busca": busca, "grupo": grupo, "situacao": situacao,
+        "preco": preco, "ordem": ordem,
     })
-
 
 @so_equipe
 def adicionar_servico(request):
-    form = ServicoForm(request.POST or None)
+    form = ServicoForm(request.POST or None, request.FILES or None)
     if request.method == "POST" and form.is_valid():
         form.save()
         messages.success(request, "Serviço cadastrado.")
@@ -267,7 +285,7 @@ def adicionar_servico(request):
 @so_equipe
 def editar_servico(request, id):
     servico = get_object_or_404(Servico, id=id)
-    form = ServicoForm(request.POST or None, instance=servico)
+    form = ServicoForm(request.POST or None, request.FILES or None, instance=servico)
     if request.method == "POST" and form.is_valid():
         form.save()
         messages.success(request, "Serviço atualizado.")
