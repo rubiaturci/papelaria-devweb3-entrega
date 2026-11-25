@@ -1,8 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" role="img" aria-label="Ilustração de materiais de papelaria">
-  <rect width="400" height="260" fill="#2f5d62" rx="12"/>
-  <rect x="60" y="50" width="130" height="170" rx="8" fill="#fbf6ec"/>
-  <rect x="60" y="50" width="22" height="170" rx="6" fill="#c8553d"/>
-  <g stroke="#e6dcc8" stroke-width="3"><line x1="95" y1="90" x2="175" y2="90"/><line x1="95" y1="115" x2="175" y2="115"/><line x1="95" y1="140" x2="175" y2="140"/><line x1="95" y1="165" x2="175" y2="165"/><line x1="95" y1="190" x2="175" y2="190"/></g>
-  <g transform="rotate(-30 280 140)"><rect x="200" y="128" width="170" height="24" rx="4" fill="#f2c14e"/><polygon points="370,128 395,140 370,152" fill="#e9d8b4"/><polygon points="386,135 395,140 386,145" fill="#2b2b2b"/><rect x="190" y="128" width="14" height="24" fill="#c8553d"/></g>
-  <circle cx="300" cy="200" r="22" fill="#fbf6ec"/><text x="300" y="210" font-family="Georgia,serif" font-size="30" font-weight="bold" text-anchor="middle" fill="#c8553d">;</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 310" role="img" aria-label="Composição editorial de materiais de papelaria">
+<defs><pattern id="lines" width="12" height="12" patternUnits="userSpaceOnUse"><path d="M0 11.5H12" stroke="#d8d4c6" stroke-width=".7"/></pattern></defs>
+<ellipse cx="219" cy="161" rx="186" ry="137" fill="#e0e1d3"/>
+<g transform="rotate(-13 148 157)">
+<rect x="53" y="43" width="174" height="228" rx="4" fill="#ced1c2"/>
+<rect x="49" y="38" width="174" height="228" rx="4" fill="#315b50"/>
+<rect x="59" y="45" width="154" height="213" rx="2" fill="none" stroke="#91a395" stroke-width=".9"/>
+<rect x="82" y="87" width="108" height="58" rx="2" fill="#f6eddb"/>
+<text x="136" y="111" fill="#315b50" font-size="10" font-family="Georgia,serif" text-anchor="middle" letter-spacing="2">NOTAS</text>
+<path d="M103 123h66" stroke="#bfa378" stroke-width="1"/>
+<text x="136" y="183" fill="#f2b880" font-family="Georgia,serif" font-size="27" text-anchor="middle">&amp;</text>
+</g>
+<g transform="rotate(12 282 147)">
+<rect x="217" y="36" width="147" height="212" rx="3" fill="#c6c8b9"/>
+<rect x="212" y="31" width="147" height="212" rx="3" fill="#fbf7ee"/>
+<rect x="226" y="51" width="119" height="176" fill="url(#lines)"/>
+<path d="M237 53v172" stroke="#dfbba9" stroke-width=".9"/>
+<g fill="none" stroke="#9b8a6d" stroke-width="2.5"><path d="M229 35v-9q6-5 12 0v9M250 35v-9q6-5 12 0v9M271 35v-9q6-5 12 0v9M292 35v-9q6-5 12 0v9M313 35v-9q6-5 12 0v9M334 35v-9q6-5 12 0v9"/></g>
+</g>
+<g transform="rotate(34 350 210)"><rect x="345" y="121" width="10" height="151" rx="2" fill="#bf914f"/><path d="M345 272h10l-5 15z" fill="#e3c9a0"/><path d="m348 281 2 6 2-6z" fill="#34423a"/><rect x="345" y="121" width="10" height="14" rx="2" fill="#aa6652"/><path d="M349 136v134" stroke="#e6b878" stroke-width="1.5"/></g>
+<g transform="rotate(-9 267 248)"><rect x="221" y="218" width="78" height="62" fill="#c2c8ad"/><rect x="226" y="212" width="78" height="62" fill="#d9b982"/><rect x="231" y="206" width="78" height="62" fill="#f3dcb2"/></g>
+<g transform="rotate(-16 115 267)" stroke="#a67e49" fill="none" stroke-width="2"><path d="M105 278v-23q0-10 8-10t8 10v18q0 6-5 6t-5-6v-17"/></g>
 </svg>

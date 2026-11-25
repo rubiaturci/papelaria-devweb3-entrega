@@ -1,12 +1,13 @@
 :root {
-    --fundo: #fbf6ec;
+    --fundo: #faf7f0;
     --branco: #ffffff;
-    --texto: #2b2b2b;
-    --cinza: #6f6a60;
-    --linha: #e6dcc8;
-    --verde: #2f5d62;
-    --verde-escuro: #234649;
-    --coral: #c8553d;
+    --texto: #29352f;
+    --cinza: #66685e;
+    --linha: #e2dacb;
+    --verde: #315b50;
+    --verde-escuro: #203e35;
+    --coral: #ad4938;
+    --dourado: #f2b880;
 }
 
 * {
@@ -47,7 +48,7 @@ img {
 /* Topo e rodapé */
 
 .topo {
-    background: var(--verde);
+    background: var(--verde-escuro);
     padding: 16px 32px;
     display: flex;
     align-items: center;
@@ -107,7 +108,7 @@ main {
 /* Botões */
 
 .botao {
-    background: var(--coral);
+    background: var(--verde);
     border: 0;
     border-radius: 6px;
     color: var(--branco);
@@ -120,7 +121,7 @@ main {
 }
 
 .botao:hover {
-    background: #a94530;
+    background: var(--verde-escuro);
 }
 
 .link {
@@ -423,16 +424,23 @@ tr:last-child td {
 
 .banner {
     display: grid;
-    grid-template-columns: 1.4fr 1fr;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
     align-items: center;
-    gap: 32px;
-    padding: 20px 0 24px;
-    margin-bottom: 8px;
+    gap: 28px;
+    padding: 34px 36px;
+    margin-bottom: 28px;
+    background: #ecece1;
+    border-radius: 4px;
 }
 
 .banner h1 {
-    font-size: 2.2rem;
-    margin-bottom: 12px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    color: var(--verde-escuro);
+    font-size: clamp(2.3rem, 4vw, 3.2rem);
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+    margin-bottom: 16px;
 }
 
 .banner p {
@@ -442,7 +450,7 @@ tr:last-child td {
 
 .banner img {
     width: 100%;
-    max-width: 320px;
+    max-width: 440px;
     justify-self: center;
 }
 
@@ -543,10 +551,11 @@ tr:last-child td {
 }
 
 .destaque-nav {
-    background: var(--coral);
-    border-radius: 6px;
-    color: var(--branco) !important;
-    padding: 4px 12px;
+    background: transparent;
+    border: 1px solid var(--dourado);
+    border-radius: 5px;
+    color: var(--dourado) !important;
+    padding: 7px 14px;
 }
 
 /* Indicadores, filtros e chips */
@@ -861,4 +870,39 @@ h1, h2, h3 { line-height: 1.25; }
 @media (max-width: 480px) { .equipe-grade { grid-template-columns: 1fr; } .catalogo-grade { grid-template-columns: 1fr; } .topo nav { gap: 12px; } }
 
 /* Espaçamento dos botões da abertura, inclusive quando quebram linha. */
-.banner-texto .botao { margin: 0 8px 8px 0; }
+.banner-texto .botao { margin: 0; }
+
+/* Identidade editorial da papelaria: foco no conteúdo, não em enfeites. */
+.marca { font-family: Georgia, "Times New Roman", serif; font-size: 1.55rem; letter-spacing: -.035em; }
+.topo { padding: 16px 32px; }
+.topo nav { gap: 22px; }
+.topo nav .destaque-nav:hover { background: var(--dourado); color: var(--verde-escuro) !important; text-decoration: none; }
+main { max-width: 1180px; }
+.botao { font-weight: 600; border-radius: 5px; }
+.botao.secundario { border-width: 1px; }
+.preco, .card-produto .card-texto strong { color: var(--verde-escuro); }
+.banner .chamada-editorial { display: block; color: var(--verde); font-size: .73rem; letter-spacing: .17em; font-weight: 700; text-transform: uppercase; margin-bottom: 17px; }
+.banner p { max-width: 38ch; line-height: 1.7; margin-bottom: 24px; }
+.banner-acoes { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; }
+.banner-acoes .botao { padding: 12px 19px; }
+.banner-acoes .link-editorial { color: var(--verde-escuro); font-size: .92rem; font-weight: 600; text-underline-offset: 4px; }
+.vitrine-cabecalho { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin: 32px 0 18px; padding-bottom: 13px; border-bottom: 1px solid var(--linha); }
+.vitrine-cabecalho small { color: var(--verde); font-size: .72rem; letter-spacing: .13em; text-transform: uppercase; font-weight: 700; }
+.vitrine-cabecalho h2 { margin: 5px 0 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.9rem; font-weight: 400; color: var(--verde-escuro); }
+.vitrine-cabecalho a { font-size: .9rem; font-weight: 600; text-underline-offset: 4px; }
+.card-produto { border-radius: 6px; }
+.card-produto img, .card-produto .sem-foto { background: #f3f0e8; height: 176px; padding: 18px; }
+.card-produto .card-texto { padding: 15px 16px; }
+.card-produto .card-texto small { font-size: .72rem; letter-spacing: .04em; }
+.card-produto .card-texto h3 { font-weight: 600; line-height: 1.4; }
+.card-produto .card-compra { padding: 0 16px 16px; }
+.card-produto .card-compra .botao { background: transparent; color: var(--verde-escuro); border: 1px solid var(--verde); }
+.card-produto .card-compra .botao:hover { background: var(--verde); color: var(--branco); }
+.painel-card { border-bottom: 1px solid var(--linha); border-radius: 6px; }
+.painel-card:hover { border-color: var(--verde); }
+@media (max-width: 720px) {
+    .banner { grid-template-columns: 1fr; padding: 24px 20px; gap: 16px; }
+    .banner img { max-width: 340px; }
+    .topo { padding: 14px 16px; }
+    .topo nav { gap: 12px; }
+}
