@@ -13,10 +13,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         copiadas = 0
-        for produto in Produto.objects.exclude(imagem=""):
+        for produto in Produto.objects.exclude(imagem="").exclude(imagem__isnull=True):
             nome = produto.imagem.name
             arquivo = Path(settings.MEDIA_ROOT) / nome
-            if default_storage.exists(nome) or not arquivo.exists():
+            if not nome or default_storage.exists(nome) or not arquivo.is_file():
                 continue
             default_storage.save(nome, ContentFile(arquivo.read_bytes()))
             copiadas += 1

@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Contato, Integrante, Produto
+from .models import Contato, Integrante, Produto, Servico
 
 
 class ProdutoForm(forms.ModelForm):
@@ -25,3 +25,9 @@ class IntegranteForm(forms.ModelForm):
         model = Integrante
         fields = ["nome", "cargo", "biografia", "foto_url"]
         widgets = {"biografia": forms.Textarea}
+
+
+class ServicoForm(forms.ModelForm):
+    class Meta:
+        model = Servico
+        fields = ["nome", "grupo", "descricao", "ativo"]

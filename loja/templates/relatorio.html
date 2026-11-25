@@ -2,6 +2,8 @@
 
 {% block titulo %}Relatórios | Ponto & Vírgula{{ grafico_categorias_labels|json_script:"dados-categorias-labels" }}
 {{ grafico_categorias_valores|json_script:"dados-categorias-valores" }}
+{{ grafico_grupos_servicos_labels|json_script:"dados-grupos-servicos-labels" }}
+{{ grafico_grupos_servicos_valores|json_script:"dados-grupos-servicos-valores" }}
 {{ grafico_servicos_valores|json_script:"dados-servicos-valores" }}
 {{ grafico_produtos_situacao|json_script:"dados-produtos-situacao" }}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -29,6 +31,15 @@
             }],
         },
         options: { aspectRatio: 2, plugins: { legend: { position: "bottom" } } },
+    });
+
+    new Chart(document.getElementById("graficogruposservicos"), {
+        type: "bar",
+        data: {
+            labels: JSON.parse(document.getElementById("dados-grupos-servicos-labels").textContent),
+            datasets: [{ label: "Serviços", data: JSON.parse(document.getElementById("dados-grupos-servicos-valores").textContent), backgroundColor: "#2f5d62" }],
+        },
+        options: { aspectRatio: 2, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } },
     });
 
     new Chart(document.getElementById("graficoservicos"), {
@@ -73,10 +84,16 @@
     <article class="card"><div class="card-texto"><small>Mensagens de contato</small><h3>{{ total_contatos }}</h3></div></article>
     <article class="card"><div class="card-texto"><small>Serviços ativos</small><h3>{{ total_servicos }}</h3></div></article>
 </div>
-    <div class="card card-texto grafico-servicos">
-        <h3>Serviços ativos e inativos</h3>
-        <canvas id="graficoservicos"></canvas>
-    </div>
+<h2>Relatório de serviços</h2>
+<div class="grade relatorio-resumo">
+    <article class="card card-texto"><small>Serviços cadastrados</small><h3>{{ total_servicos_cadastrados }}</h3></article>
+    <article class="card card-texto"><small>Disponíveis (ativos)</small><h3>{{ total_servicos }}</h3></article>
+    <article class="card card-texto"><small>Indisponíveis (inativos)</small><h3>{{ total_servicos_inativos }}</h3></article>
+</div>
+<div class="grade relatorio-graficos relatorio-extra">
+    <div class="card card-texto"><h3>Serviços por categoria</h3><canvas id="graficogruposservicos"></canvas></div>
+    <div class="card card-texto"><h3>Serviços ativos e inativos</h3><canvas id="graficoservicos"></canvas></div>
+</div>
 <h2>Estoque baixo (até 5 unidades)</h2>
 {% if estoque_baixo %}
 <table>

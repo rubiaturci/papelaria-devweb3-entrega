@@ -4,6 +4,7 @@
 
 {% block conteudo %}
 <h1>Serviços</h1>
+{% if user.is_staff %}<p><a class="botao" href="{% url 'gerenciar_servicos' %}">Gerenciar serviços</a></p>{% endif %}
 <p>Além dos produtos, fazemos impressões, acabamentos e serviços rápidos para estudantes, profissionais e moradores do bairro.</p>
 
 {% for grupo, itens in grupos %}

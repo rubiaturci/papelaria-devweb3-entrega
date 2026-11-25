@@ -22,17 +22,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
+from django.core.exceptions import ImproperlyConfigured
+from django.core.management.utils import get_random_secret_key
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get(
-    "SECRET_KEY",
-    "django-insecure-7l#_h@xm4n-vb&s!hp)nfi9qta7l09abjxmq@4ch+!)rgs3(g+",
-)
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "True") == "True"
+# Produção exige configurações explícitas; testes são sempre isolados.
+EM_TESTE = "test" in sys.argv
+NO_RENDER = bool(os.environ.get("RENDER_EXTERNAL_HOSTNAME") or os.environ.get("RENDER"))
+DEBUG = not NO_RENDER and os.environ.get("DEBUG", "True") == "True"
+SECRET_KEY = os.environ.get("SECRET_KEY")
+if not SECRET_KEY:
+    if not DEBUG and not EM_TESTE:
+        raise ImproperlyConfigured("Configure SECRET_KEY no ambiente.")
+    SECRET_KEY = get_random_secret_key()
 
 ALLOWED_HOSTS = [
     h.strip() for h in os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",") if h.strip()
@@ -93,7 +94,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
 import dj_database_url
-from django.core.exceptions import ImproperlyConfigured
 
 # Banco de dados
 # - Produção (Render): PostgreSQL do Supabase, pela variável DATABASE_URL
@@ -102,9 +102,12 @@ from django.core.exceptions import ImproperlyConfigured
 #   a cada deploy no Render.
 # - Desenvolvimento e testes: SQLite local (db.sqlite3).
 DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
-USANDO_POSTGRES = DATABASE_URL.startswith(("postgres://", "postgresql://"))
+USANDO_POSTGRES = not EM_TESTE and DATABASE_URL.startswith(("postgres://", "postgresql://"))
 
-if DATABASE_URL:
+if not DEBUG and not EM_TESTE and not USANDO_POSTGRES:
+    raise ImproperlyConfigured("Produção exige DATABASE_URL do PostgreSQL.")
+
+if DATABASE_URL and not EM_TESTE:
     DATABASES = {
         "default": dj_database_url.parse(
             DATABASE_URL,
@@ -113,7 +116,7 @@ if DATABASE_URL:
             ssl_require=USANDO_POSTGRES,
         )
     }
-elif DEBUG or "test" in sys.argv:
+elif DEBUG or EM_TESTE:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",

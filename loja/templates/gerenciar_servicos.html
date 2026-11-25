@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block titulo %}Gerenciar serviços | Ponto & Vírgula{% endblock %}
+{% block conteudo %}
+<div class="titulo-acao"><h1>Gerenciamento de serviços</h1><a class="botao" href="{% url 'adicionar_servico' %}">+ Novo serviço</a></div>
+<div class="indicadores">
+    <div class="indicador"><small>Total de serviços</small><strong>{{ total }}</strong></div>
+    <div class="indicador"><small>Disponíveis</small><strong>{{ ativos }}</strong></div>
+    <div class="indicador"><small>Indisponíveis</small><strong>{{ inativos }}</strong></div>
+</div>
+<form class="filtros" method="get">
+    <label>Buscar<input type="search" name="busca" value="{{ busca }}"></label>
+    <label>Categoria<select name="grupo"><option value="">Todas</option>{% for item in grupos %}<option value="{{ item }}" {% if grupo == item %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></label>
+    <label>Situação<select name="situacao"><option value="">Todas</option><option value="ativo" {% if situacao == 'ativo' %}selected{% endif %}>Ativo</option><option value="inativo" {% if situacao == 'inativo' %}selected{% endif %}>Inativo</option></select></label>
+    <button class="botao" type="submit">Filtrar</button><a href="{% url 'gerenciar_servicos' %}">Limpar filtros</a>
+</form>
+<div class="tabela"><table><thead><tr><th>Nome</th><th>Categoria</th><th>Descrição</th><th>Situação</th><th>Ações</th></tr></thead><tbody>
+{% for servico in servicos %}<tr><td>{{ servico.nome }}</td><td>{{ servico.grupo }}</td><td>{{ servico.descricao }}</td><td>{{ servico.ativo|yesno:"Ativo,Inativo" }}</td><td class="acoes"><a class="chip" href="{% url 'editar_servico' servico.id %}">Editar</a><form method="post" action="{% url 'excluir_servico' servico.id %}" onsubmit="return confirm('Excluir este serviço?');">{% csrf_token %}<button class="chip perigo" type="submit">Excluir</button></form></td></tr>
+{% empty %}<tr><td colspan="5">Nenhum serviço encontrado.</td></tr>{% endfor %}
+</tbody></table></div>
+<p><a href="{% url 'gerenciar_produtos' %}">Gerenciar produtos</a> · <a href="{% url 'painel' %}">Voltar ao Dashboard</a></p>
+{% endblock %}

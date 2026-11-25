@@ -1,14 +1,18 @@
 from decimal import Decimal
+from unittest.mock import patch
 
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from .models import Categoria, Contato, Integrante, Pedido, Produto
+from .models import ArquivoMidia, Categoria, Contato, Integrante, Pedido, Produto, Servico
 
 
 class BaseTest(TestCase):
     def setUp(self):
+        api = patch('loja.views.buscar_produtos_api', return_value=[])
+        api.start()
+        self.addCleanup(api.stop)
         self.categoria = Categoria.objects.create(nome="Cadernos")
         self.produto = Produto.objects.create(
             nome="Caderno Azul", preco="20.00", estoque=5, categoria=self.categoria
@@ -320,3 +324,51 @@ class RelatorioSituacaoTests(BaseTest):
         self.assertEqual(resposta.context["grafico_produtos_situacao"], [1, 1])
         self.assertEqual(resposta.context["total_inativos"], 1)
         self.assertContains(resposta, 'id="graficosituacao"')
+
+
+class ServicosGerenciarTests(BaseTest):
+    def test_cliente_nao_gerencia_servicos(self):
+        self.client.force_login(self.cliente)
+        self.assertEqual(self.client.get(reverse("gerenciar_servicos")).status_code, 302)
+
+    def test_crud_e_filtros(self):
+        self.client.force_login(self.equipe)
+        dados = {"nome": "Teste impressão", "grupo": "Teste", "descricao": "Exemplo", "ativo": "on"}
+        self.assertRedirects(self.client.post(reverse("adicionar_servico"), dados), reverse("gerenciar_servicos"))
+        servico = Servico.objects.get(nome=dados["nome"])
+        resposta = self.client.get(reverse("gerenciar_servicos"), {"grupo": "Teste", "situacao": "ativo"})
+        self.assertEqual(list(resposta.context["servicos"]), [servico])
+        dados["nome"] = "Teste atualizado"
+        dados.pop("ativo")
+        self.client.post(reverse("editar_servico", args=[servico.id]), dados)
+        servico.refresh_from_db()
+        self.assertEqual(servico.nome, "Teste atualizado")
+        self.assertFalse(servico.ativo)
+        url = reverse("excluir_servico", args=[servico.id])
+        self.assertEqual(self.client.get(url).status_code, 405)
+        self.client.post(url)
+        self.assertFalse(Servico.objects.filter(pk=servico.pk).exists())
+
+    def test_relatorio_servicos_usa_banco(self):
+        self.client.force_login(self.equipe)
+        Servico.objects.create(nome="Teste de relatório", grupo="Teste relatório", ativo=False)
+        resposta = self.client.get(reverse("gerar_relatorio"))
+        self.assertEqual(resposta.context["total_servicos_cadastrados"], Servico.objects.count())
+        self.assertEqual(resposta.context["total_servicos_inativos"], Servico.objects.filter(ativo=False).count())
+        self.assertIn("Teste relatório", resposta.context["grafico_grupos_servicos_labels"])
+
+    def test_cliente_nao_altera_categoria(self):
+        self.client.force_login(self.cliente)
+        self.assertEqual(self.client.post(reverse("categoria_api"), {"nome": "Indevida"}).status_code, 403)
+
+
+class PersistenciaMidiaTests(TestCase):
+    def test_imagem_lida_do_banco_por_nova_instancia(self):
+        from django.core.files.base import ContentFile
+        from .storage import BancoDeDadosStorage
+        nome = BancoDeDadosStorage().save("produtos/teste.png", ContentFile(b"imagem de teste"))
+        self.assertTrue(ArquivoMidia.objects.filter(nome=nome).exists())
+        with BancoDeDadosStorage().open(nome) as arquivo:
+            self.assertEqual(arquivo.read(), b"imagem de teste")
+        resposta = self.client.get(reverse("midia", args=[nome]))
+        self.assertEqual(resposta.content, b"imagem de teste")

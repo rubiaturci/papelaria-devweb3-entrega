@@ -48,3 +48,12 @@ PAGINAS
 
 TESTES
 python manage.py test
+
+SERVICOS
+/gerenciar/servicos/    CRUD, filtros e indicadores dos serviços (só equipe)
+
+PERSISTENCIA
+Reiniciar o Render não deve recriar o banco: produtos, pedidos, usuários,
+contatos, integrantes e imagens permanecem no PostgreSQL do Supabase.
+Não use flush ou apague o banco para reiniciar a aplicação.
+Os testes usam SQLite isolado mesmo que DATABASE_URL esteja configurada.

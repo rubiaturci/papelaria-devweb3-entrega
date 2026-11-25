@@ -15,7 +15,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
-from .forms import ContatoForm, IntegranteForm, ProdutoForm
+from .forms import ContatoForm, IntegranteForm, ProdutoForm, ServicoForm
 from .models import ArquivoMidia, Categoria, Contato, Integrante, Pedido, Produto, Servico
 from .serializers import CategoriaSerializer
 
@@ -228,6 +228,61 @@ def excluir_produto(request, id):
     return redirect("gerenciar_produtos")
 
 
+# Gerenciamento dos serviços informativos da papelaria
+
+
+@so_equipe
+def gerenciar_servicos(request):
+    todos = Servico.objects.all()
+    lista = todos
+    busca = request.GET.get("busca", "").strip()
+    grupo = request.GET.get("grupo", "")
+    situacao = request.GET.get("situacao", "")
+    if busca:
+        lista = lista.filter(nome__icontains=busca)
+    if grupo:
+        lista = lista.filter(grupo=grupo)
+    if situacao in ("ativo", "inativo"):
+        lista = lista.filter(ativo=situacao == "ativo")
+    return render(request, "gerenciar_servicos.html", {
+        "servicos": lista,
+        "grupos": todos.order_by("grupo").values_list("grupo", flat=True).distinct(),
+        "total": todos.count(),
+        "ativos": todos.filter(ativo=True).count(),
+        "inativos": todos.filter(ativo=False).count(),
+        "busca": busca, "grupo": grupo, "situacao": situacao,
+    })
+
+
+@so_equipe
+def adicionar_servico(request):
+    form = ServicoForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Serviço cadastrado.")
+        return redirect("gerenciar_servicos")
+    return render(request, "servico_form.html", {"form": form, "titulo": "Novo serviço"})
+
+
+@so_equipe
+def editar_servico(request, id):
+    servico = get_object_or_404(Servico, id=id)
+    form = ServicoForm(request.POST or None, instance=servico)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Serviço atualizado.")
+        return redirect("gerenciar_servicos")
+    return render(request, "servico_form.html", {"form": form, "titulo": "Editar serviço"})
+
+
+@so_equipe
+@require_POST
+def excluir_servico(request, id):
+    get_object_or_404(Servico, id=id).delete()
+    messages.success(request, "Serviço excluído.")
+    return redirect("gerenciar_servicos")
+
+
 # Mensagens de contato
 
 
@@ -298,6 +353,9 @@ def categoria_api(request, id=None):
             serializer = CategoriaSerializer(get_object_or_404(Categoria, id=id))
         return Response(serializer.data)
 
+    if not request.user.is_staff:
+        return Response({"erro": "Apenas a equipe pode alterar categorias."}, status=status.HTTP_403_FORBIDDEN)
+
     if request.method == "POST":
         serializer = CategoriaSerializer(data=request.data)
         if serializer.is_valid():
@@ -341,7 +399,12 @@ def gerar_relatorio(request):
 
     categorias_grafico = Categoria.objects.annotate(total=Count("produtos")).order_by("nome")
 
+    grupos_grafico = list(Servico.objects.values("grupo").annotate(total=Count("id")).order_by("grupo"))
     contexto = {
+        "grafico_grupos_servicos_labels": [g["grupo"] for g in grupos_grafico],
+        "grafico_grupos_servicos_valores": [g["total"] for g in grupos_grafico],
+        "total_servicos_cadastrados": Servico.objects.count(),
+        "total_servicos_inativos": Servico.objects.filter(ativo=False).count(),
         "grafico_categorias_labels": [c.nome for c in categorias_grafico],
         "grafico_categorias_valores": [c.total for c in categorias_grafico],
         "grafico_servicos_valores": [
