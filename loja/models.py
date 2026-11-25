@@ -119,6 +119,21 @@ class Integrante(models.Model):
         ordering = ["id"]
 
     @property
+    def foto_personalizada(self):
+        """Ignora avatares genéricos antigos quando há retrato local."""
+        from urllib.parse import urlsplit
+        url = (self.foto_url or "").strip()
+        try:
+            partes = urlsplit(url)
+            if partes.scheme not in ("http", "https") or not partes.hostname:
+                return ""
+            if partes.hostname.lower() == "ui-avatars.com" and self.avatar_padrao.endswith(".jpg"):
+                return ""
+        except ValueError:
+            return ""
+        return url
+
+    @property
     def avatar_padrao(self):
         """Retrato demonstrativo local; fotos válidas cadastradas têm prioridade."""
         nome = (self.nome or "").strip().casefold()

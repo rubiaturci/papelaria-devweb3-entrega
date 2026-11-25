@@ -449,3 +449,20 @@ class ServicosModeloOficialTests(BaseTest):
         resposta = self.client.post(reverse("adicionar_servico"), {"nome": "Preço inválido", "grupo": "Teste", "preco": "-1", "ativo": "on"})
         self.assertEqual(resposta.status_code, 200)
         self.assertFalse(Servico.objects.filter(nome="Preço inválido").exists())
+
+
+    def test_avatar_local_tem_prioridade_sobre_avatar_generico(self):
+        integrante = Integrante.objects.create(
+            nome="Ana Souza", cargo="Equipe",
+            foto_url="https://ui-avatars.com/api/?name=Ana+Souza",
+        )
+        self.assertEqual(integrante.foto_personalizada, "")
+        self.client.force_login(self.equipe)
+        for rota in ("quem_somos", "integrantes", "gerenciar_equipe"):
+            resposta = self.client.get(reverse(rota))
+            self.assertContains(resposta, "/static/images/avatar-ana.jpg")
+            self.assertNotContains(resposta, "https://ui-avatars.com/api/")
+        integrante.foto_url = "https://example.com/foto.png"
+        integrante.save()
+        self.assertEqual(integrante.foto_personalizada, integrante.foto_url)
+        self.assertContains(self.client.get(reverse("quem_somos")), integrante.foto_url)

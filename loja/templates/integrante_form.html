@@ -10,9 +10,9 @@
     <form class="formulario" method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        {% if form.foto_url.value %}
+        {% if form.instance.foto_personalizada %}
             <p>Foto atual:</p>
-            <img class="foto-previa" src="{{ form.foto_url.value }}" alt="Foto atual do integrante" onerror="this.onerror=null;this.src='{% static form.instance.avatar_padrao %}';">
+            <img class="foto-previa" src="{{ form.instance.foto_personalizada }}" alt="Foto atual do integrante" onerror="this.onerror=null;this.src='{% static form.instance.avatar_padrao %}';">
         {% else %}
             <img class="foto-previa" src="{% static form.instance.avatar_padrao %}" alt="Retrato demonstrativo">
         {% endif %}
