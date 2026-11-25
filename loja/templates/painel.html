@@ -52,4 +52,5 @@
         </a>
     {% endif %}
 </div>
+{% if user.is_staff %}<p><a href="{% url 'gerenciar_produtos' %}">Gerenciar produtos</a></p>{% endif %}
 {% endblock %}
