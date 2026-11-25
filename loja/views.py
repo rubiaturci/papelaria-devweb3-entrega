@@ -2,6 +2,7 @@ import logging
 import requests
 
 from django.contrib import messages
+from django.core.cache import cache
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Count, DecimalField, F, ProtectedError, Sum
 from django.shortcuts import get_object_or_404, redirect, render
@@ -41,15 +42,53 @@ def servicos(request):
     return render(request, "servicos.html", {"grupos": grupos.items()})
 
 
-def produtos(request):
-    # Produtos vindos da API externa (exibidos acima do catálogo)
+CABECALHOS_API = {"User-Agent": "Mozilla/5.0 (PapelariaPontoVirgula/1.0)", "Accept": "application/json"}
+
+
+def buscar_produtos_api():
+    """Busca produtos de uma API externa.
+
+    Tenta a Fake Store API primeiro. Ela costuma bloquear servidores em nuvem
+    (como o Render), então, se falhar, usa a DummyJSON como alternativa.
+    O resultado fica em cache por 1 hora para a página não esperar a API sempre.
+    """
+    produtos_api = cache.get("produtos_api")
+    if produtos_api is not None:
+        return produtos_api
+
     try:
-        resposta = requests.get("https://fakestoreapi.com/products", timeout=10)
+        resposta = requests.get("https://fakestoreapi.com/products", headers=CABECALHOS_API, timeout=6)
         resposta.raise_for_status()
         produtos_api = resposta.json()
     except (requests.RequestException, ValueError):
-        logger.exception("Falha ao buscar produtos da API externa")
-        produtos_api = []
+        logger.warning("Fake Store API indisponível, tentando DummyJSON")
+        try:
+            resposta = requests.get(
+                "https://dummyjson.com/products?limit=20&select=title,price,category,thumbnail",
+                headers=CABECALHOS_API,
+                timeout=6,
+            )
+            resposta.raise_for_status()
+            produtos_api = [
+                {
+                    "title": item["title"],
+                    "price": item["price"],
+                    "category": item["category"],
+                    "image": item["thumbnail"],
+                }
+                for item in resposta.json()["products"]
+            ]
+        except (requests.RequestException, ValueError, KeyError):
+            logger.exception("Falha ao buscar produtos das APIs externas")
+            return []
+
+    cache.set("produtos_api", produtos_api, 60 * 60)
+    return produtos_api
+
+
+def produtos(request):
+    # Produtos vindos da API externa (exibidos abaixo do catálogo)
+    produtos_api = buscar_produtos_api()
 
     lista = Produto.objects.filter(ativo=True).select_related("categoria")
 
