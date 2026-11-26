@@ -98,11 +98,68 @@ main {
 }
 
 .rodape {
-    border-top: 1px solid var(--linha);
-    color: var(--cinza);
-    font-size: 0.85rem;
-    padding: 20px;
+    background: var(--verde-escuro);
+    border-top: 5px solid var(--dourado);
+    color: #d9e2dc;
+    font-family: Arial, sans-serif;
+    font-size: 0.9rem;
+    margin-top: 48px;
+}
+
+.rodape-conteudo {
+    display: grid;
+    gap: 32px;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    margin: 0 auto;
+    max-width: 1180px;
+    padding: 40px 24px 28px;
+}
+
+.rodape .marca {
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.rodape h2 {
+    color: var(--dourado);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.rodape-coluna {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.rodape-coluna a {
+    color: var(--branco);
+    text-decoration: none;
+}
+
+.rodape-coluna a:hover {
+    color: var(--dourado);
+    text-decoration: underline;
+}
+
+.rodape-final {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    color: #aebdb4;
+    font-size: 0.8rem;
+    padding: 16px 24px;
     text-align: center;
+}
+
+@media (max-width: 720px) {
+    .rodape-conteudo {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .rodape-marca {
+        grid-column: 1 / -1;
+    }
 }
 
 /* Botões */
@@ -913,3 +970,36 @@ main { max-width: 1180px; }
 .campo-cadastro .helptext { line-height: 1.55; font-size: .85rem; }
 .campo-cadastro .helptext ul { list-style: disc; padding-left: 19px; margin-top: 6px; }
 .campo-cadastro input[aria-invalid="true"] { border-color: var(--coral); }
+
+
+/* Chamada para os serviços no catálogo */
+
+.chamada-servicos {
+    align-items: center;
+    background: var(--branco);
+    border: 1px solid var(--linha);
+    border-left: 5px solid var(--dourado);
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: space-between;
+    margin: 36px 0;
+    padding: 20px 24px;
+}
+
+.chamada-servicos small {
+    color: var(--verde);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+.chamada-servicos h2 {
+    margin: 2px 0 6px;
+}
+
+.chamada-servicos p {
+    color: var(--cinza);
+}

@@ -47,8 +47,13 @@ def servicos(request):
 CABECALHOS_API = {"User-Agent": "Mozilla/5.0 (PapelariaPontoVirgula/1.0)", "Accept": "application/json"}
 
 
+QUANTIDADE_API = 8
+# Na DummyJSON usamos só categorias próximas de estudo e escritório.
+CATEGORIAS_DUMMYJSON = ["laptops", "tablets"]
+
+
 def buscar_produtos_api():
-    """Busca produtos de uma API externa.
+    """Busca produtos de uma API externa (loja parceira).
 
     Tenta a Fake Store API primeiro. Ela costuma bloquear servidores em nuvem
     (como o Render), então, se falhar, usa a DummyJSON como alternativa.
@@ -59,30 +64,38 @@ def buscar_produtos_api():
         return produtos_api
 
     try:
-        resposta = requests.get("https://fakestoreapi.com/products", headers=CABECALHOS_API, timeout=6)
+        resposta = requests.get(
+            f"https://fakestoreapi.com/products?limit={QUANTIDADE_API}",
+            headers=CABECALHOS_API,
+            timeout=6,
+        )
         resposta.raise_for_status()
-        produtos_api = resposta.json()
+        produtos_api = resposta.json()[:QUANTIDADE_API]
     except (requests.RequestException, ValueError):
         logger.warning("Fake Store API indisponível, tentando DummyJSON")
         try:
-            resposta = requests.get(
-                "https://dummyjson.com/products?limit=20&select=title,price,category,thumbnail",
-                headers=CABECALHOS_API,
-                timeout=6,
-            )
-            resposta.raise_for_status()
-            produtos_api = [
-                {
-                    "title": item["title"],
-                    "price": item["price"],
-                    "category": item["category"],
-                    "image": item["thumbnail"],
-                }
-                for item in resposta.json()["products"]
-            ]
+            produtos_api = []
+            for categoria in CATEGORIAS_DUMMYJSON:
+                resposta = requests.get(
+                    f"https://dummyjson.com/products/category/{categoria}",
+                    params={"limit": QUANTIDADE_API, "select": "title,price,category,thumbnail"},
+                    headers=CABECALHOS_API,
+                    timeout=6,
+                )
+                resposta.raise_for_status()
+                for item in resposta.json()["products"]:
+                    produtos_api.append(
+                        {
+                            "title": item["title"],
+                            "price": item["price"],
+                            "category": item["category"],
+                            "image": item["thumbnail"],
+                        }
+                    )
         except (requests.RequestException, ValueError, KeyError):
             logger.exception("Falha ao buscar produtos das APIs externas")
             return []
+        produtos_api = produtos_api[:QUANTIDADE_API]
 
     cache.set("produtos_api", produtos_api, 60 * 60)
     return produtos_api
@@ -143,7 +156,12 @@ def produtos(request):
         Categoria.objects.filter(ativo=True).annotate(total=Count("produtos")).order_by("nome")
     )
 
+    grupos_servicos = (
+        Servico.objects.filter(ativo=True).order_by("grupo").values_list("grupo", flat=True).distinct()
+    )
+
     contexto = {
+        "grupos_servicos": grupos_servicos,
         "produtos": lista,
         "produtos_api": produtos_api,
         "categorias": categorias_com_total,

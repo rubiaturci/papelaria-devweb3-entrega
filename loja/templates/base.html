@@ -35,7 +35,38 @@
     </main>
 
     <footer class="rodape">
-        <p>Ponto &amp; Vírgula Papelaria, {% now "Y" %}. Loja fictícia feita para a aula de Desenvolvimento Web III.</p>
+        <div class="rodape-conteudo">
+            <div class="rodape-marca">
+                <a class="marca" href="{% url 'inicio' %}">Ponto <span>&amp;</span> Vírgula</a>
+                <p>Cadernos, canetas, mochilas, impressões e serviços rápidos para quem estuda e trabalha.</p>
+            </div>
+            <div class="rodape-coluna">
+                <h2>Navegue</h2>
+                <a href="{% url 'inicio' %}">Início</a>
+                <a href="{% url 'quem_somos' %}">Quem Somos</a>
+                <a href="{% url 'produtos' %}">Produtos</a>
+                <a href="{% url 'servicos' %}">Serviços</a>
+            </div>
+            <div class="rodape-coluna">
+                <h2>Atendimento</h2>
+                <p>Segunda a sexta, 8h às 18h</p>
+                <p>Sábado, 8h às 12h</p>
+                <a href="{% url 'novo_contato' %}">Fale com a gente →</a>
+            </div>
+            <div class="rodape-coluna">
+                <h2>Minha conta</h2>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'painel' %}">Dashboard</a>
+                    <a href="{% url 'meus_pedidos' %}">Meus pedidos</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Entrar</a>
+                    <a href="{% url 'cadastro' %}">Criar conta</a>
+                {% endif %}
+            </div>
+        </div>
+        <p class="rodape-final">
+            © {% now "Y" %} Ponto &amp; Vírgula Papelaria · Loja fictícia criada para a disciplina de Desenvolvimento Web III
+        </p>
     </footer>
 </body>
 </html>

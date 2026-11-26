@@ -47,8 +47,17 @@
     {% endfor %}
 </div>
 
+<section class="chamada-servicos">
+    <div>
+        <small>Também fazemos</small>
+        <h2>Serviços da papelaria</h2>
+        <p>{{ grupos_servicos|join:" · " }}</p>
+    </div>
+    <a class="botao" href="{% url 'servicos' %}">Ver serviços e preços</a>
+</section>
+
 <h2>Produtos da API — catálogo parceiro</h2>
-<p class="subtitulo">Itens de demonstração de uma API externa, separados do estoque da papelaria.</p>
+<p class="subtitulo">Itens de uma loja parceira, vindos de uma API externa. Preços em dólar, informados pela própria API.</p>
 
 <div class="grade catalogo-grade">
     {% for produto in produtos_api %}
@@ -61,7 +70,7 @@
             <div class="card-texto">
                 <small>{{ produto.category }}</small>
                 <h3>{{ produto.title }}</h3>
-                <strong>Preço informado pela API: {{ produto.price }}</strong>
+                <strong>US$ {{ produto.price|floatformat:"2g" }}</strong>
             </div>
         </article>
     {% empty %}
