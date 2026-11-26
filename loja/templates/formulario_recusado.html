@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block titulo %}Envio interrompido | Ponto & Vírgula{% endblock %}
+
+{% block conteudo %}
+<section class="caixa">
+    <h1>Não foi possível enviar o formulário</h1>
+    <p class="subtitulo">Abra a página novamente e tente enviar de novo. Se o problema continuar, confira se o navegador permite cookies deste site.</p>
+    <a class="botao" href="{% url destino %}">{{ texto }}</a>
+</section>
+{% endblock %}

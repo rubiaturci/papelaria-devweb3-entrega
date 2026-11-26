@@ -44,6 +44,8 @@ if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
     CSRF_TRUSTED_ORIGINS = [f"https://{RENDER_EXTERNAL_HOSTNAME}"]
 
+CSRF_FAILURE_VIEW = "config.views.formulario_recusado"
+
 
 # Application definition
 

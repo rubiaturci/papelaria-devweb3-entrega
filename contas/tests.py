@@ -1,9 +1,51 @@
+import re
+
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import Client, TestCase
 from django.urls import reverse
+
+from loja.models import Contato
 
 
 class ContasTests(TestCase):
+    def test_formulario_aberto_antes_do_login_pode_ser_reaberto(self):
+        client = Client(enforce_csrf_checks=True)
+        senha = "Senha-Teste-Fluxo-985"
+        User.objects.create_user("cliente_fluxo", password=senha)
+        contato = reverse("novo_contato")
+        login = reverse("login")
+
+        def token_da_pagina(url):
+            resposta = client.get(url)
+            return re.search(r'name="csrfmiddlewaretoken" value="([^"]+)"', resposta.text)[1]
+
+        token_antigo = token_da_pagina(contato)
+        resposta = client.post(login, {
+            "username": "cliente_fluxo",
+            "password": senha,
+            "csrfmiddlewaretoken": token_da_pagina(login),
+        })
+        self.assertRedirects(resposta, reverse("painel"))
+
+        dados = {
+            "nome": "Pessoa de Teste",
+            "email": "avaliacao@example.com",
+            "telefone": "11912345678",
+            "mensagem": "Mensagem de teste",
+        }
+        resposta = client.post(contato, {**dados, "csrfmiddlewaretoken": token_antigo})
+        self.assertContains(
+            resposta,
+            f'<a class="botao" href="{contato}">Abrir formulário novamente</a>',
+            status_code=403,
+            html=True,
+        )
+        self.assertFalse(Contato.objects.exists())
+
+        resposta = client.post(contato, {**dados, "csrfmiddlewaretoken": token_da_pagina(contato)})
+        self.assertRedirects(resposta, reverse("inicio"))
+        self.assertEqual(Contato.objects.count(), 1)
+
     def test_cadastro_cria_usuario_comum(self):
         dados = {
             "username": "nova",
