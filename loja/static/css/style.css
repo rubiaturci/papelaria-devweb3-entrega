@@ -1051,3 +1051,31 @@ body {
 body {
     font-variant-numeric: lining-nums;
 }
+
+/* Menu sempre visível: o topo acompanha a rolagem (principalmente no celular) */
+.topo {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+@media (max-width: 720px) {
+    .topo {
+        gap: 6px;
+        padding: 10px 16px;
+        border-bottom-width: 4px;
+    }
+
+    .marca {
+        font-size: 1.35rem;
+    }
+
+    .topo nav {
+        gap: 4px 16px;
+        font-size: 0.98rem;
+    }
+
+    .topo nav .destaque-nav {
+        padding: 4px 12px;
+    }
+}
